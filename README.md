@@ -2,6 +2,8 @@
 
 Welcome to the official repository of Mike The pedagogical agent.
 
+<img src="./img/agent.gif" width="80%"/>
+
 This is a Unity3D project which was originally created for a CentraleSupelec Lecture on Artificial Intelligence and Social Sciences.
 
 This project contains the foundation of a Socially Interactive Agent or Embodied Conversational Agent.
