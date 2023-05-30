@@ -2,7 +2,7 @@
 
 Welcome to the official repository of Mike The pedagogical agent.
 
-<img src="./img/agent.gif" width="80%"/>
+<img src="./img/agent.gif" width="20%"/>
 
 This is a Unity3D project which was originally created for a CentraleSupelec Lecture on Artificial Intelligence and Social Sciences.
 
