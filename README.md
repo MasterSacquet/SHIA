@@ -29,7 +29,7 @@ The scene only has a fake background, a Camera, some lighting and our agent. The
 - Perform some pre-rendered animations (downloaded from Mixamo)
 - Do basic lip animation mixed with facial expressions
 
-The project is quite light and straightforward. It does not compete with other exising agent plaforms such as (Greta)[https://github.com/isir/greta], Marc or (VHTK)[https://vhtoolkit.ict.usc.edu/] but can be a good playground to manipulate an interactive character.
+The project is quite light and straightforward. It does not compete with other exising agent plaforms such as [Greta](https://github.com/isir/greta), Marc or [VHTK](https://vhtoolkit.ict.usc.edu/) but can be a good playground to manipulate an interactive character.
 
 # The DialogManager
 
@@ -43,4 +43,4 @@ No TTS has been integrated yet, the DialogManager expects to find audio files in
 
 # Credits
 
-Original 3D Model from (Mike Alger)[https://mikealger.com/portfolio/avatar#top], prerendered animations from (Mixamo)[https://www.mixamo.com]
+Original 3D Model from [Mike Alger](https://mikealger.com/portfolio/avatar#top), prerendered animations from [Mixamo](https://www.mixamo.com)
