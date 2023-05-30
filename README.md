@@ -10,4 +10,4 @@ It was not really designed to fully reproduce the capacity of a SIA, but to offe
 
 # Credits
 
-Original 3D Model from Mike Alger, prerendered animations from Mixamo
+Original 3D Model from Mike Alger (https://mikealger.com/portfolio/avatar#top), prerendered animations from Mixamo (https://www.mixamo.com)
