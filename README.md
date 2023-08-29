@@ -39,8 +39,8 @@ A dialog is represented by both a JSON file, listing questions and possible answ
 
 During the dialog, the DialogManager is retrieving the possible answers of a question for adding the corresponding buttons to the interface.
 
-No TTS has been integrated yet, the DialogManager expects to find audio files in the Resources folder with file names corresponding to questions' id.
-
+The DialogManager expects to find audio files in the Resources folder with file names corresponding to questions' id.
+However, it is possible now to use OpenMary as well.
 # Credits
 
 Original 3D Model from [Mike Alger](https://mikealger.com/portfolio/avatar#top), prerendered animations from [Mixamo](https://www.mixamo.com)
