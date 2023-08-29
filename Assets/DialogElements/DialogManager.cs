@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 /*
- * La classe DialogManager permet de centraliser les fonctionnalités liés à l'aspect conversationnel de l'agent. 
- * C'est notamment ici qu'un Chatbot est chargé et est géré. Le DialogManager met à jour l'interface de conversation
- * suivant l'état du dialogue du Chatbot.
- */
+* La classe DialogManager permet de centraliser les fonctionnalités liés à l'aspect conversationnel de l'agent. 
+* C'est notamment ici qu'un Chatbot est chargé et est géré. Le DialogManager met à jour l'interface de conversation
+* suivant l'état du dialogue du Chatbot.
+*/
 public class DialogManager : MonoBehaviour
 {
     
@@ -22,6 +27,8 @@ public class DialogManager : MonoBehaviour
     public GameObject ButtonPrefab;
     public FacialExpression faceExpression;
     private Animator anim;
+    //OpenMary
+    public string mary_voice = "upmc-pierre-hsmm";
 
     // Start is called before the first frame update
     void Start()
@@ -55,6 +62,85 @@ public class DialogManager : MonoBehaviour
             Debug.LogException(e);
         }
     }
+
+    /*
+     * Cette méthode permet de demander à MaryTTS de générer un audio, puis de le jouer, à partir du texte
+     * MaryTTS server doit donc être lancé sur la machine.
+     * Pour l'instant, il est attendu que le répertoire marytts-5.2 soit copié dans le répertoire StreamingAssets du projet 
+     * et que MaryTTS-Server soit exécuté à partir de /marytts-5.2/bin/ 
+     */
+    public void PlayAudio(string text)
+    {
+        // need to change player setting to allow non-https connections
+        string maryTTS_request = "http://localhost:59125/process?INPUT_TEXT=" + text.Replace(" ", "+") + "&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE=fr&VOICE=" + mary_voice;
+        Debug.Log("request: " + maryTTS_request);
+
+        StartCoroutine(SetAudioClipFromFile(maryTTS_request));
+    }
+
+    IEnumerator SetAudioClipFromFile(string path)
+    {
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
+        {
+            yield return www.SendWebRequest();
+            if (www.result == UnityWebRequest.Result.ConnectionError)
+            {
+                Debug.Log(www.error);
+                Debug.Log("Unable to use MaryTTS voice synthesiser.");
+                string MaryTTSLocation = Application.streamingAssetsPath + "/marytts-5.2/bin/marytts-server";
+                if (File.Exists(MaryTTSLocation))
+                {
+                    Debug.Log("Trying to restart MaryTTS server.");
+                    Process proc = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            UseShellExecute = true,
+                            WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized, // cannot close it if set to hidden
+                            CreateNoWindow = true,
+                            FileName = MaryTTSLocation
+                        }
+                    };
+                    try
+                    {
+                        proc.Start();
+                        System.Threading.Thread.Sleep(1000);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log("Failed to start MaryTTS server: ");
+                        Debug.LogException(e);
+                    }
+
+                    if (proc.StartTime <= DateTime.Now && !proc.HasExited)
+                    {
+                        Debug.Log("Restarted MaryTTS server.");
+                    }
+                    else
+                    {
+                        var errorMsg = string.Format("Failed to started MaryTTS (server not running). Disabling MaryTTS.");
+
+                        if (proc.HasExited)
+                        {
+                            errorMsg = string.Format("Failed to started MaryTTS (server was closed). Disabling MaryTTS.");
+                        }
+
+                        Debug.Log(errorMsg);
+                    }
+                }
+                else
+                {
+                    Debug.Log("Failed to restart MaryTTS server. Disabling MaryTTS.");
+                }
+            }
+            else
+            {
+                AudioClip music = DownloadHandlerAudioClip.GetContent(www);
+                audioSource.PlayOneShot(music, volume);
+            }
+        }
+    }
+
 
     /*
      * Cette méthode affiche du texte dans le panneau d'affichage à gauche de l'UI

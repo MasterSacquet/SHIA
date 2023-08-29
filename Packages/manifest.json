@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.gpt4all.unity": "https://github.com/Macoron/gpt4all.unity.git?path=/Packages/com.gpt4all.unity",
     "com.unity.collab-proxy": "1.15.4",
     "com.unity.ide.rider": "3.0.7",
     "com.unity.ide.visualstudio": "2.0.12",
@@ -8,6 +9,7 @@
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.7.0-pre.1",
     "com.unity.ugui": "1.0.0",
+    "com.whisper.unity": "https://github.com/Macoron/whisper.unity.git?path=/Packages/com.whisper.unity",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",

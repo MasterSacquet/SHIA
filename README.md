@@ -44,3 +44,4 @@ No TTS has been integrated yet, the DialogManager expects to find audio files in
 # Credits
 
 Original 3D Model from [Mike Alger](https://mikealger.com/portfolio/avatar#top), prerendered animations from [Mixamo](https://www.mixamo.com)
+Thanks to Julien Saunier for the OpenMary integration

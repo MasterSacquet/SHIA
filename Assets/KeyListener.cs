@@ -36,7 +36,8 @@ public class KeyListener : MonoBehaviour
 
         if (Input.GetKeyDown("s"))
         {
-            dialogManager.PlayAudio(0);
+            //joue la phrase avec OpenMary
+            dialogManager.PlayAudio("Bonjour, ça va");
         }
     }
 }
