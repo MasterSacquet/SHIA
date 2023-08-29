@@ -31,7 +31,7 @@ The scene only has a fake background, a Camera, some lighting and our agent. The
 
 The project is quite light and straightforward. It does not compete with other exising agent plaforms such as [Greta](https://github.com/isir/greta), Marc or [VHTK](https://vhtoolkit.ict.usc.edu/) but can be a good playground to manipulate an interactive character.
 
-# The DialogManager
+# The original button-based dialog manager
 
 The big part of this project is the DialogManager. You can follow the existing dialog examples to understand how it works.
 
@@ -39,9 +39,14 @@ A dialog is represented by both a JSON file, listing questions and possible answ
 
 During the dialog, the DialogManager is retrieving the possible answers of a question for adding the corresponding buttons to the interface.
 
-The DialogManager expects to find audio files in the Resources folder with file names corresponding to questions' id.
-However, it is possible now to use OpenMary as well.
+The DialogManager expects to find pre-recorded audio files in the Resources folder (with file names corresponding to questions' id) in order to produce the agent's audio responses.
+However, it is also possible to use OpenMary as well for real-time text-to-speech.
+
+## The real-time voice (GPT4all and Whisper) dialog manager
+Additionnally, there is also a VoiceDialogManager class which is implemented to serve as a demo for integrating modern AI solutions for Speech-To-Text and LLMs. This class uses Macoron plugins [GPT4ALL.Unity](https://github.com/Macoron/gpt4all.unity) and [WHISPER.Unity](https://github.com/Macoron/whisper.unity). The resulting dialog is quite slow and imprecise, because everything runs on the computer, but it can be used as a starting point to integrate online, more precise and faster solutions. Please note that the models are not distributed here and should be retrieved by following Macoron's instructions on his respective repositories.
+
 # Credits
 
 Original 3D Model from [Mike Alger](https://mikealger.com/portfolio/avatar#top), prerendered animations from [Mixamo](https://www.mixamo.com)
+
 Thanks to Julien Saunier for the OpenMary integration
