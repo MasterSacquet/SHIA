@@ -45,6 +45,8 @@ However, it is also possible to use OpenMary as well for real-time text-to-speec
 ## The real-time voice (GPT4all and Whisper) dialog manager
 Additionnally, there is also a VoiceDialogManager class which is implemented to serve as a demo for integrating modern AI solutions for Speech-To-Text and LLMs. This class uses Macoron plugins [GPT4ALL.Unity](https://github.com/Macoron/gpt4all.unity) and [WHISPER.Unity](https://github.com/Macoron/whisper.unity). The resulting dialog is quite slow and imprecise, because everything runs on the computer, but it can be used as a starting point to integrate online, more precise and faster solutions. Please note that the models are not distributed here and should be retrieved by following Macoron's instructions on his respective repositories.
 
+> We also implemented a version of the DialogManager which sends request to LMStudio.
+
 # Credits
 
 Original 3D Model from [Mike Alger](https://mikealger.com/portfolio/avatar#top), prerendered animations from [Mixamo](https://www.mixamo.com)
