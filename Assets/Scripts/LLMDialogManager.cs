@@ -41,7 +41,7 @@ public class LLMDialogManager : MonoBehaviour
     private string _buffer;
 
     //LLM
-    public string urlOlama;
+    public string urlOllama;
     [TextArea(15,20)]
     public string preprompt;
     private string _response;
@@ -164,7 +164,7 @@ public class LLMDialogManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(prompt))
             return;
-        StartCoroutine(postRequest(urlOlama+ "api/chat", "{\"model\": \"zephyr:latest\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
+        StartCoroutine(postRequest(urlOllama+ "api/chat", "{\"model\": \"zephyr:latest\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
     }
 
    
@@ -282,18 +282,6 @@ public class LLMDialogManager : MonoBehaviour
     {
         Text text = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
         text.text = s;
-    }
-
-    /* 
-     * Cette méthode affiche les réponses sous forme de boutons dans l'UI.
-     */
-    public void DisplayAnswers(List<string> proposals)
-    {
-
-
-        
-
-
     }
 
     public void EndDialog()
