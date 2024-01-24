@@ -8,7 +8,7 @@ public class KeyListener : MonoBehaviour
 {
 
     public Animator animator;
-    public DialogManager dialogManager;
+    public LLMDialogManager dialogManager;
     // Start is called before the first frame update
     void Start()
     {

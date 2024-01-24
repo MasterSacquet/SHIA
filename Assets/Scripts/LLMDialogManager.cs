@@ -12,13 +12,13 @@ using Button = UnityEngine.UI.Button;
 using Debug = UnityEngine.Debug;
 using Text = UnityEngine.UI.Text;
 /*
-* La classe LMStudioDialogManager permet de centraliser les fonctionnalités liés à l'aspect conversationnel de l'agent en Full Audio pour une démo avec LMStudio. 
+* La classe LLMDialogManager permet de centraliser les fonctionnalités liés à l'aspect conversationnel de l'agent en Full Audio en utilisant un LLM hébergé sur un serveur distant. 
 * ATTENTION : pour faire fonctionner le plugin Whisper de Macoron, il faut ajouter les modèles dans le répertoire 
 * StreamingAssets. Allez voir les pages dédiées de ces modules pour plus d'explications. Ils ne sont pas fournis par défaut car ils prennent
 * trop de place.
 * Pour le fonctionnement de MaryTTS, le serveur MaryTTS doit s'exécuter depuis le répertoire StreamingAssets et n'est pas fourni également
 */
-public class LMStudioDialogManager : MonoBehaviour
+public class LLMDialogManager : MonoBehaviour
 {
 
     public AudioSource audioSource;
@@ -37,14 +37,18 @@ public class LMStudioDialogManager : MonoBehaviour
     public WhisperManager whisper;
     public MicrophoneRecord microphoneRecord;
     public bool streamSegments = true;
-    public bool printLanguage = true;
+    public bool printLanguage = false;
     private string _buffer;
 
     //LLM
+    public string urlOlama;
+    [TextArea(15,20)]
+    public string preprompt;
     private string _response;
 
     //openMary
-    public string mary_voice = "upmc-pierre-hsmm";
+    public string marylanguage = "en";
+    public string mary_voice = "cmu-rms";
 
     // Start is called before the first frame update
     void Start()
@@ -57,14 +61,13 @@ public class LMStudioDialogManager : MonoBehaviour
         button.GetComponentInChildren<Text>().text = "Record";
         
         button.GetComponent<Button>().onClick.AddListener(delegate { OnButtonPressed(); });
+
         button.GetComponent<RectTransform>().position = new Vector3(0 * 170.0f + 90.0f, 39.0f, 0.0f);
         button.transform.SetParent(buttonPanel);
 
         //whisper
         whisper.OnNewSegment += OnNewSegment;
         microphoneRecord.OnRecordStop += OnRecordStop;
-        //LLM
-        //manager.OnResponseUpdated += OnResponseHandler;
         
     }
 
@@ -94,11 +97,6 @@ public class LMStudioDialogManager : MonoBehaviour
         if (res == null)
             return;
 
-        /*
-        var time = sw.ElapsedMilliseconds;
-        var rate = length / (time * 0.001f);
-        timeText.text = $"Time: {time} ms\nRate: {rate:F1}x";
-        */
         var text = res.Result;
         if (printLanguage)
             text += $"\n\nLanguage: {res.Language}";
@@ -152,12 +150,11 @@ public class LMStudioDialogManager : MonoBehaviour
             Debug.Log("Received: " + uwr.downloadHandler.text);
             _response = uwr.downloadHandler.text;
             //retrieve response from the JSON
-            int pos = _response.IndexOf("content\": ");
+            int pos = _response.IndexOf("content\":");
             Debug.Log(pos);
-            int endpos = _response.Substring(pos + 11).IndexOf("\"");
+            int endpos = _response.Substring(pos + 10).IndexOf("\"");
             Debug.Log(endpos);
-            _response = _response.Substring(pos+11, endpos);
-            _response = _response.Split("###")[0];
+            _response = _response.Substring(pos+10, endpos);
             InformationDisplay(_response);
             PlayAudio(_response);
         }
@@ -167,7 +164,7 @@ public class LMStudioDialogManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(prompt))
             return;
-        StartCoroutine(postRequest("http://localhost:1234/v1/chat/completions", "{ \r\n  \"messages\": [ \r\n    { \"role\": \"system\", \"content\": \"Be very agressive.\" },\r\n    { \"role\": \"user\", \"content\": \""+prompt+"\" }\r\n  ], \r\n  \"temperature\": 0.7, \r\n  \"max_tokens\": -1,\r\n  \"stream\": false\r\n}"));        
+        StartCoroutine(postRequest(urlOlama+ "api/chat", "{\"model\": \"zephyr:latest\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
     }
 
    
@@ -197,7 +194,7 @@ public class LMStudioDialogManager : MonoBehaviour
     public void PlayAudio(string text)
     {
         // need to change player setting to allow non-https connections
-        string maryTTS_request = "http://localhost:59125/process?INPUT_TEXT=" + text.Replace(" ", "+") + "&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE=fr&VOICE=" + mary_voice;
+        string maryTTS_request = "http://localhost:59125/process?INPUT_TEXT=" + text.Replace(" ", "+") + "&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE="+marylanguage+"&VOICE=" + mary_voice;
         Debug.Log("request: " + maryTTS_request);
 
         StartCoroutine(SetAudioClipFromFile(maryTTS_request));
