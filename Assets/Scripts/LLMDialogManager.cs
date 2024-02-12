@@ -151,11 +151,11 @@ public class LLMDialogManager : MonoBehaviour
             Debug.Log("Received: " + uwr.downloadHandler.text);
             _response = uwr.downloadHandler.text;
             //retrieve response from the JSON
-            int pos = _response.IndexOf("content\":");
+            int pos = _response.IndexOf("response\":");
             Debug.Log(pos);
-            int endpos = _response.Substring(pos + 10).IndexOf("\"");
+            int endpos = _response.Substring(pos + 11).IndexOf("\"");
             Debug.Log(endpos);
-            _response = _response.Substring(pos+10, endpos);
+            _response = _response.Substring(pos+11, endpos);
             InformationDisplay(_response);
             PlayAudio(_response);
         }
