@@ -42,6 +42,7 @@ public class LLMDialogManager : MonoBehaviour
 
     //LLM
     public string urlOllama;
+    public string modelName;
     [TextArea(15,20)]
     public string preprompt;
     private string _response;
@@ -164,7 +165,8 @@ public class LLMDialogManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(prompt))
             return;
-        StartCoroutine(postRequest(urlOllama+ "api/chat", "{\"model\": \"zephyr:latest\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
+        //StartCoroutine(postRequest(urlOllama+ "api/chat", "{\"model\": \"Elvis:latest\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
+        StartCoroutine(postRequest(urlOllama+ "api/generate", "{\"model\": \""+ modelName + "\",\"system\": \""+preprompt+"\",\"prompt\": \""+prompt+"\",\"stream\": false}"));        
     }
 
    

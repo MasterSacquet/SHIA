@@ -673,11 +673,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MikeAlgerFull
       objectReference: {fileID: 0}
-    - target: {fileID: 4710148808477011923, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-        type: 3}
-      propertyPath: dialogManager
-      value: 
-      objectReference: {fileID: 1660001424}
     - target: {fileID: 4710148808477011926, guid: 76478e72ca3e6ea45af2a3be87a63b55,
         type: 3}
       propertyPath: target
@@ -685,19 +680,13 @@ PrefabInstance:
       objectReference: {fileID: 963194228}
     - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
         type: 3}
-      propertyPath: whisper
-      value: 
-      objectReference: {fileID: 1660001427}
-    - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-        type: 3}
-      propertyPath: urlOlama
-      value: http://hardcore_engelbart:SvJk7h7gir@51.75.199.119:11093/
+      propertyPath: modelName
+      value: Elvis:latest
       objectReference: {fileID: 0}
     - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
         type: 3}
       propertyPath: preprompt
-      value: You are a guide at Centrale Supelec Engineering School and you make
-        short answers
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
         type: 3}
@@ -706,8 +695,8 @@ PrefabInstance:
       objectReference: {fileID: 92763579}
     - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
         type: 3}
-      propertyPath: mary_voice
-      value: cmu-rms
+      propertyPath: urlOllama
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
         type: 3}
@@ -721,88 +710,14 @@ PrefabInstance:
       objectReference: {fileID: 1065919406}
     - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
         type: 3}
-      propertyPath: ButtonPrefab
-      value: 
-      objectReference: {fileID: 3881083886603802510, guid: 1ea7a58cf14e24f43b8e938fe4b07137,
-        type: 3}
-    - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-        type: 3}
-      propertyPath: marylanguage
-      value: en-US
-      objectReference: {fileID: 0}
-    - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-        type: 3}
-      propertyPath: printLanguage
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-        type: 3}
-      propertyPath: faceExpression
-      value: 
-      objectReference: {fileID: 1660001425}
-    - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-        type: 3}
       propertyPath: informationPanel
       value: 
       objectReference: {fileID: 868516443}
-    - target: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-        type: 3}
-      propertyPath: microphoneRecord
-      value: 
-      objectReference: {fileID: 1660001426}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76478e72ca3e6ea45af2a3be87a63b55, type: 3}
---- !u!114 &1660001424 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7332171295667993632, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-    type: 3}
-  m_PrefabInstance: {fileID: 1660001422}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7440fa30844dfdf40831736c15ceb9b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1660001425 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4710148808477011922, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-    type: 3}
-  m_PrefabInstance: {fileID: 1660001422}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a66c722286b108b498072d154fe2c536, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1660001426 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2762673670550936773, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-    type: 3}
-  m_PrefabInstance: {fileID: 1660001422}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1660001427 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3228158708978071423, guid: 76478e72ca3e6ea45af2a3be87a63b55,
-    type: 3}
-  m_PrefabInstance: {fileID: 1660001422}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9370225a2ca94276b870d5f87b0db55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &1660001431 stripped
 AudioSource:
   m_CorrespondingSourceObject: {fileID: 4710148808477011921, guid: 76478e72ca3e6ea45af2a3be87a63b55,

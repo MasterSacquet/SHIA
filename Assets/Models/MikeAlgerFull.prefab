@@ -3087,7 +3087,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7440fa30844dfdf40831736c15ceb9b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 4710148808477011921}
   volume: 0.5
   informationPanel: {fileID: 0}
   textPanel: {fileID: 0}
@@ -3099,7 +3099,8 @@ MonoBehaviour:
   microphoneRecord: {fileID: 2762673670550936773}
   streamSegments: 1
   printLanguage: 0
-  urlOlama: 
+  urlOllama: 
+  modelName: Elvis:latest
   preprompt: 
   marylanguage: en-US
   mary_voice: cmu-rms
