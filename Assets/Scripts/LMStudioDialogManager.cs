@@ -41,9 +41,15 @@ public class LMStudioDialogManager : MonoBehaviour
     private string _buffer;
 
     //LLM
+    public string urlLMStudio = "localhost";
+    public int portLMStudio =1234;
+    [TextArea(15, 20)]
+    public string preprompt;
     private string _response;
+    public string temperature = "0.7";
 
     //openMary
+    public string marylanguage = "fr";
     public string mary_voice = "upmc-pierre-hsmm";
 
     // Start is called before the first frame update
@@ -167,7 +173,7 @@ public class LMStudioDialogManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(prompt))
             return;
-        StartCoroutine(postRequest("http://localhost:1234/v1/chat/completions", "{ \r\n  \"messages\": [ \r\n    { \"role\": \"system\", \"content\": \"Be very agressive.\" },\r\n    { \"role\": \"user\", \"content\": \""+prompt+"\" }\r\n  ], \r\n  \"temperature\": 0.7, \r\n  \"max_tokens\": -1,\r\n  \"stream\": false\r\n}"));        
+        StartCoroutine(postRequest("http://"+urlLMStudio+":"+portLMStudio+"/v1/chat/completions", "{ \r\n  \"messages\": [ \r\n    { \"role\": \"system\", \"content\": \""+preprompt+"\" },\r\n    { \"role\": \"user\", \"content\": \""+prompt+"\" }\r\n  ], \r\n  \"temperature\": "+temperature+", \r\n  \"max_tokens\": -1,\r\n  \"stream\": false\r\n}"));        
     }
 
    
