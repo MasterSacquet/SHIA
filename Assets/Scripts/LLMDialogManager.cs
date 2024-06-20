@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Windows;
+using UnityEngine.Windows.Speech;
 using Whisper;
 using Whisper.Utils;
 using Application = UnityEngine.Application;
@@ -33,12 +35,19 @@ public class LLMDialogManager : MonoBehaviour
     public FacialExpression faceExpression;
     private Animator anim;
 
+    //dictation
+    private DictationRecognizer dictationRecognizer;
+
     //whisper
+    private bool useWhisper = false;
     public WhisperManager whisper;
     public MicrophoneRecord microphoneRecord;
     public bool streamSegments = true;
     public bool printLanguage = false;
     private string _buffer;
+
+    //conversation memory
+    private Queue<String> conversationList;
 
     //LLM
     public string urlOllama;
@@ -66,26 +75,79 @@ public class LLMDialogManager : MonoBehaviour
         button.GetComponent<RectTransform>().position = new Vector3(0 * 170.0f + 90.0f, 39.0f, 0.0f);
         button.transform.SetParent(buttonPanel);
 
+        conversationList = new Queue<String>();
+
+        //dictation
+        dictationRecognizer = new DictationRecognizer();
+        dictationRecognizer.AutoSilenceTimeoutSeconds = 10;
+        dictationRecognizer.InitialSilenceTimeoutSeconds = 10;
+        dictationRecognizer.DictationResult += DictationRecognizer_DictationResult;
+        dictationRecognizer.DictationError += DictationRecognizer_DictationError;
+        dictationRecognizer.DictationComplete += DictationRecognizer_DictationComplete;
+        
+
         //whisper
         whisper.OnNewSegment += OnNewSegment;
         microphoneRecord.OnRecordStop += OnRecordStop;
         
     }
 
+    private void DictationRecognizer_DictationComplete(DictationCompletionCause cause)
+    {
+        button.GetComponentInChildren<Text>().text = "Record";
+    }
+
+    private void DictationRecognizer_DictationError(string error, int hresult)
+    {
+        useWhisper = true;
+        button.GetComponentInChildren<Text>().text = "Record";
+
+    }
+
+    private void DictationRecognizer_DictationResult(string text, ConfidenceLevel confidence)
+    {
+        Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
+        textp.text = text;
+        conversationList.Enqueue(text);
+        if(conversationList.Count>10)
+            conversationList.Dequeue();
+        string fullconv = "";
+        foreach(String s in conversationList)
+        {
+            fullconv += " " +s;
+        }
+        SendToChat(fullconv);
+    }
+
     //whisper
-    
+
 
     private void OnButtonPressed()
     {
-        if (!microphoneRecord.IsRecording)
+        if (useWhisper)
         {
-            microphoneRecord.StartRecord();
-            button.GetComponentInChildren<Text>().text = "Stop";
+            if (!microphoneRecord.IsRecording)
+            {
+                microphoneRecord.StartRecord();
+                button.GetComponentInChildren<Text>().text = "Stop";
+            }
+            else
+            {
+                microphoneRecord.StopRecord();
+                button.GetComponentInChildren<Text>().text = "Record";
+            }
         }
         else
         {
-            microphoneRecord.StopRecord();
-            button.GetComponentInChildren<Text>().text = "Record";
+            if (dictationRecognizer.Status != SpeechSystemStatus.Running)
+            {
+                dictationRecognizer.Start();
+                button.GetComponentInChildren<Text>().text = "Stop";
+            }
+            if (dictationRecognizer.Status == SpeechSystemStatus.Running)
+            {
+                dictationRecognizer.Stop();
+            }
         }
     }
 
@@ -103,7 +165,15 @@ public class LLMDialogManager : MonoBehaviour
             text += $"\n\nLanguage: {res.Language}";
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
         textp.text = text;
-        SendToChat(text);
+        conversationList.Enqueue(text);
+        if (conversationList.Count > 10)
+            conversationList.Dequeue();
+        string fullconv = "";
+        foreach (String s in conversationList)
+        {
+            fullconv += " " + s;
+        }
+        SendToChat(fullconv);
     }
 
     
@@ -157,15 +227,36 @@ public class LLMDialogManager : MonoBehaviour
             Debug.Log(endpos);
             _response = _response.Substring(pos+11, endpos);
             InformationDisplay(_response);
+            _response = ProcessAffectiveContent(_response);
+            conversationList.Enqueue(_response);
+            if (conversationList.Count > 10)
+                conversationList.Dequeue();
             PlayAudio(_response);
         }
+    }
+
+    private string ProcessAffectiveContent(string response)
+    {
+        if (response.Contains("{JOY}"))
+        {
+            DisplayAUs(new int[] { 6, 12 }, new int[] { 80, 80 }, 5f);
+            anim.SetTrigger("JOY");
+            return response.Remove(response.IndexOf("{JOY}"), 4);
+        }
+        if (response.Contains("{SAD}"))
+        {
+            DisplayAUs(new int[] { 1,4, 15 }, new int[] { 60, 60,30 }, 5f);
+            anim.SetTrigger("SAD");
+            return response.Remove(response.IndexOf("{SAD}"), 4);
+        }
+        return response;
     }
 
     private void SendToChat(string prompt)
     {
         if (string.IsNullOrEmpty(prompt))
             return;
-        //StartCoroutine(postRequest(urlOllama+ "api/chat", "{\"model\": \"Elvis:latest\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
+        //StartCoroutine(postRequest(urlOllama+ "api/chat", "{\"model\": \""+ modelName + "\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
         StartCoroutine(postRequest(urlOllama+ "api/generate", "{\"model\": \""+ modelName + "\",\"system\": \""+preprompt+"\",\"prompt\": \""+prompt+"\",\"stream\": false}"));        
     }
 
@@ -300,4 +391,6 @@ public class LLMDialogManager : MonoBehaviour
     {
         faceExpression.setFacialAUs(aus, intensities, duration);
     }
+
+    
 }

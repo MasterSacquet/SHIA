@@ -5,6 +5,7 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Windows;
+using UnityEngine.Windows.Speech;
 using Whisper;
 using Whisper.Utils;
 using Application = UnityEngine.Application;
@@ -33,12 +34,19 @@ public class LMStudioDialogManager : MonoBehaviour
     public FacialExpression faceExpression;
     private Animator anim;
 
+    //dictation
+    private DictationRecognizer dictationRecognizer;
+
     //whisper
+    private bool useWhisper = false;
     public WhisperManager whisper;
     public MicrophoneRecord microphoneRecord;
     public bool streamSegments = true;
     public bool printLanguage = true;
     private string _buffer;
+
+    //conversation memory
+    private Queue<String> conversationList;
 
     //LLM
     public string urlLMStudio = "localhost";
@@ -66,6 +74,16 @@ public class LMStudioDialogManager : MonoBehaviour
         button.GetComponent<RectTransform>().position = new Vector3(0 * 170.0f + 90.0f, 39.0f, 0.0f);
         button.transform.SetParent(buttonPanel);
 
+        conversationList = new Queue<String>();
+
+        //dictation
+        dictationRecognizer = new DictationRecognizer();
+        dictationRecognizer.AutoSilenceTimeoutSeconds = 20;
+        dictationRecognizer.InitialSilenceTimeoutSeconds = 10;
+        dictationRecognizer.DictationResult += DictationRecognizer_DictationResult;
+        dictationRecognizer.DictationError += DictationRecognizer_DictationError;
+        dictationRecognizer.DictationComplete += DictationRecognizer_DictationComplete;
+
         //whisper
         whisper.OnNewSegment += OnNewSegment;
         microphoneRecord.OnRecordStop += OnRecordStop;
@@ -75,19 +93,64 @@ public class LMStudioDialogManager : MonoBehaviour
     }
 
     //whisper
-    
+
+
+    private void DictationRecognizer_DictationComplete(DictationCompletionCause cause)
+    {
+        button.GetComponentInChildren<Text>().text = "Record";
+    }
+
+    private void DictationRecognizer_DictationError(string error, int hresult)
+    {
+        useWhisper = true;
+        button.GetComponentInChildren<Text>().text = "Record";
+
+    }
+
+    private void DictationRecognizer_DictationResult(string text, ConfidenceLevel confidence)
+    {
+        Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
+        textp.text = text;
+        conversationList.Enqueue(text);
+        if (conversationList.Count > 10)
+            conversationList.Dequeue();
+        string fullconv = "";
+        foreach (String s in conversationList)
+        {
+            fullconv += " " + s;
+        }
+        SendToChat(fullconv);
+    }
+
+    //whisper
+
 
     private void OnButtonPressed()
     {
-        if (!microphoneRecord.IsRecording)
+        if (useWhisper)
         {
-            microphoneRecord.StartRecord();
-            button.GetComponentInChildren<Text>().text = "Stop";
+            if (!microphoneRecord.IsRecording)
+            {
+                microphoneRecord.StartRecord();
+                button.GetComponentInChildren<Text>().text = "Stop";
+            }
+            else
+            {
+                microphoneRecord.StopRecord();
+                button.GetComponentInChildren<Text>().text = "Record";
+            }
         }
         else
         {
-            microphoneRecord.StopRecord();
-            button.GetComponentInChildren<Text>().text = "Record";
+            if (dictationRecognizer.Status != SpeechSystemStatus.Running)
+            {
+                dictationRecognizer.Start();
+                button.GetComponentInChildren<Text>().text = "Stop";
+            }
+            if (dictationRecognizer.Status == SpeechSystemStatus.Running)
+            {
+                dictationRecognizer.Stop();
+            }
         }
     }
 
@@ -110,7 +173,15 @@ public class LMStudioDialogManager : MonoBehaviour
             text += $"\n\nLanguage: {res.Language}";
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
         textp.text = text;
-        SendToChat(text);
+        conversationList.Enqueue(text);
+        if (conversationList.Count > 10)
+            conversationList.Dequeue();
+        string fullconv = "";
+        foreach (String s in conversationList)
+        {
+            fullconv += " " + s;
+        }
+        SendToChat(fullconv);
     }
 
     
@@ -165,8 +236,23 @@ public class LMStudioDialogManager : MonoBehaviour
             _response = _response.Substring(pos+11, endpos);
             _response = _response.Split("###")[0];
             InformationDisplay(_response);
+            _response = ProcessAffectiveContent(_response);
+            conversationList.Enqueue(_response);
+            if (conversationList.Count > 10)
+                conversationList.Dequeue();
             PlayAudio(_response);
         }
+    }
+
+    private string ProcessAffectiveContent(string response)
+    {
+        if (response.Contains("{JOY}"))
+        {
+            DisplayAUs(new int[] { 6, 12 }, new int[] { 80, 80 }, 2.0f);
+            anim.SetTrigger("JOY");
+            return response.Remove(response.IndexOf("{JOY}"), 4);
+        }
+        return response;
     }
 
     private void SendToChat(string prompt)
@@ -300,7 +386,6 @@ public class LMStudioDialogManager : MonoBehaviour
     {
 
 
-        
 
 
     }
@@ -319,4 +404,5 @@ public class LMStudioDialogManager : MonoBehaviour
     {
         faceExpression.setFacialAUs(aus, intensities, duration);
     }
+    
 }
