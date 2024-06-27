@@ -236,6 +236,48 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &481500074 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5434058180550661860, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+    type: 3}
+  m_PrefabInstance: {fileID: 7927158191898189870}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &481500075 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4752391832342429022, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+    type: 3}
+  m_PrefabInstance: {fileID: 7927158191898189870}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9370225a2ca94276b870d5f87b0db55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &481500077 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3198282984923080179, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+    type: 3}
+  m_PrefabInstance: {fileID: 7927158191898189870}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a66c722286b108b498072d154fe2c536, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!82 &481500080 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 3198282984923080176, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+    type: 3}
+  m_PrefabInstance: {fileID: 7927158191898189870}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,8 +746,14 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
+      propertyPath: whisper
+      value: 
+      objectReference: {fileID: 481500075}
+    - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+        type: 3}
       propertyPath: preprompt
-      value: 'You are a medieval blacksmith and you hate having me as a customer '
+      value: "Tu es un forgeron medieval et tu d\xE9testes les clients qui te font
+        perdre leur temps. Tu fais toujours des r\xE9ponses tr\xE8s courtes."
       objectReference: {fileID: 0}
     - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
@@ -715,8 +763,13 @@ PrefabInstance:
     - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
       propertyPath: mary_voice
-      value: rms
+      value: upmc-pierre-hsmm
       objectReference: {fileID: 0}
+    - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+        type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 481500080}
     - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
       propertyPath: buttonPanel
@@ -724,8 +777,14 @@ PrefabInstance:
       objectReference: {fileID: 1065919406}
     - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
+      propertyPath: ButtonPrefab
+      value: 
+      objectReference: {fileID: 3881083886603802510, guid: 1ea7a58cf14e24f43b8e938fe4b07137,
+        type: 3}
+    - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+        type: 3}
       propertyPath: marylanguage
-      value: en
+      value: fr
       objectReference: {fileID: 0}
     - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
@@ -734,9 +793,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
+      propertyPath: faceExpression
+      value: 
+      objectReference: {fileID: 481500077}
+    - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+        type: 3}
       propertyPath: informationPanel
       value: 
       objectReference: {fileID: 868516443}
+    - target: {fileID: 489286906665723317, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+        type: 3}
+      propertyPath: microphoneRecord
+      value: 
+      objectReference: {fileID: 481500074}
     - target: {fileID: 3198282984923080183, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
       propertyPath: target
@@ -745,7 +814,12 @@ PrefabInstance:
     - target: {fileID: 4752391832342429022, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
       propertyPath: language
-      value: en
+      value: fr
+      objectReference: {fileID: 0}
+    - target: {fileID: 4752391832342429022, guid: 6677bc63aa784fb44a5e57563dd9d83d,
+        type: 3}
+      propertyPath: modelPath
+      value: Whisper/ggml-small.bin
       objectReference: {fileID: 0}
     - target: {fileID: 6864462729497716042, guid: 6677bc63aa784fb44a5e57563dd9d83d,
         type: 3}
