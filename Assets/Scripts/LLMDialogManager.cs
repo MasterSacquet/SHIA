@@ -68,7 +68,7 @@ public class LLMDialogManager : MonoBehaviour
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
         textp.text = "";
         button = (GameObject)Instantiate(ButtonPrefab);
-        button.GetComponentInChildren<Text>().text = "Record";
+        button.GetComponentInChildren<Text>().text = "Dictation";
         
         button.GetComponent<Button>().onClick.AddListener(delegate { OnButtonPressed(); });
 
@@ -94,7 +94,7 @@ public class LLMDialogManager : MonoBehaviour
 
     private void DictationRecognizer_DictationComplete(DictationCompletionCause cause)
     {
-        button.GetComponentInChildren<Text>().text = "Record";
+        button.GetComponentInChildren<Text>().text = "Dictation";
     }
 
     private void DictationRecognizer_DictationError(string error, int hresult)
@@ -147,13 +147,13 @@ public class LLMDialogManager : MonoBehaviour
             if (dictationRecognizer.Status == SpeechSystemStatus.Running)
             {
                 dictationRecognizer.Stop();
+                button.GetComponentInChildren<Text>().text = "Dictation";
             }
         }
     }
 
     private async void OnRecordStop(float[] data, int frequency, int channels, float length)
     {
-        button.GetComponentInChildren<Text>().text = "Record";
         _buffer = "";
 
         var res = await whisper.GetTextAsync(data, frequency, channels);
