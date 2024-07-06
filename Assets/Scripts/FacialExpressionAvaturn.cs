@@ -6,10 +6,10 @@ using UnityEngine;
  * Ce script gère les expressions faciales et l'animation des lèvres de l'agent.
  * Il est un peu basique, mais couvre les besoins minimums pour le cours IA & SHS
  */
-public class FacialExpressionAvaturn : FacialExpression
+public class FacialExpressionAvaturn : MonoBehaviour
 {
 
-    
+    public AudioSource audioSource;
     public List<SkinnedMeshRenderer> skinnedMeshRenderers;
 
 

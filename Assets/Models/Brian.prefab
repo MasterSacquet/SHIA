@@ -102,21 +102,11 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 520677446138259730}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4217836354098688872}
+      addedObject: {fileID: 6037652709372903977}
   m_SourcePrefab: {fileID: 100100000, guid: 6c8dacdcc2e82a244b63df259f891b2d, type: 3}
 --- !u!137 &1312620349554041272 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: -3374615691573484913, guid: 6c8dacdcc2e82a244b63df259f891b2d,
-    type: 3}
-  m_PrefabInstance: {fileID: 4836208116810089271}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1330598191339617958 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 6c8dacdcc2e82a244b63df259f891b2d,
     type: 3}
   m_PrefabInstance: {fileID: 4836208116810089271}
   m_PrefabAsset: {fileID: 0}
@@ -337,13 +327,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1437242005031012267}
-  SkinnedMeshRendererTarget: {fileID: 0}
   skinnedMeshRenderers:
   - {fileID: 9077687305641857882}
   - {fileID: 4799923586915685654}
   - {fileID: 1312620349554041272}
   - {fileID: 7243220833717832370}
---- !u!114 &520677446138259730
+--- !u!114 &6037652709372903977
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -352,21 +341,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5754686051043950182}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1d60e1edc83c20458cd8213e504eea3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 1330598191339617958}
-  dialogManager: {fileID: 4217836354098688872}
---- !u!114 &4217836354098688872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5754686051043950182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7440fa30844dfdf40831736c15ceb9b3, type: 3}
+  m_Script: {fileID: 11500000, guid: b7bd2d2aa60328d47b18efc2191f08ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1437242005031012267}
@@ -381,9 +356,13 @@ MonoBehaviour:
   microphoneRecord: {fileID: 5542582519226612422}
   streamSegments: 1
   printLanguage: 0
-  urlOllama: 
-  modelName: 
-  preprompt: 
+  urlOllama: http://hardcore_engelbart:SvJk7h7gir@51.178.94.112:10150/
+  modelName: mistral:instruct
+  preprompt: "Tu es Brian, un guide de la ville fran\xE7aise de la Rochelle. Tu r\xE9ponds
+    avec des phrases tr\xE8s courtes. Tu exprimes facilement tes \xE9motions. Tu
+    ins\xE8res toujours un et un seul tag \xE9motionnel dans tes r\xE9ponses de la
+    forme {TAG} o\xF9 tu remplaces TAG par une des \xE9motions suivantes, JOY, SAD
+    ou ANGER."
   marylanguage: fr
   mary_voice: upmc-pierre-hsmm
 --- !u!137 &7243220833717832370 stripped
