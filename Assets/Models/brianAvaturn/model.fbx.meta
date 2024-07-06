@@ -3,7 +3,57 @@ guid: 6c8dacdcc2e82a244b63df259f891b2d
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Body
+    second: {fileID: 2100000, guid: 577d3d97344f142439aa0e3d17ef37df, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: EyeAO
+    second: {fileID: 2100000, guid: f76d8a638f8665149af25e9126d5e639, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Eyelash
+    second: {fileID: 2100000, guid: 5b5356a5137ccf44dbdcee8dbeb16b4a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Eyes
+    second: {fileID: 2100000, guid: e4d307eb0c96f7f4d95093cf63701b33, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Head
+    second: {fileID: 2100000, guid: da932a1f3d5e09244b5ef35a30871cb5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Teeth
+    second: {fileID: 2100000, guid: 27b380cf3696852419a8152cf419a8db, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Teeth.001
+    second: {fileID: 2100000, guid: a8ee5719af3158c43a4e69a45b4772c1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: avaturn_hair_0_material
+    second: {fileID: 2100000, guid: 57e0a9a7084778843828c6b68767e61f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: avaturn_look_0_material
+    second: {fileID: 2100000, guid: a7d0563cd39ad6444908cacc8bd96fcd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: avaturn_shoes_0_material
+    second: {fileID: 2100000, guid: 38412d0cf4be8fa429bf0054ddd6aadd, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -24,7 +74,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -93,13 +143,13 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 2
+  animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
   remapMaterialsIfMaterialImportModeIsNone: 0
