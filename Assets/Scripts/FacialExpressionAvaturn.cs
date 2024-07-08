@@ -1,4 +1,5 @@
 ﻿
+using ACTA;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -132,7 +133,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
         float lipLerp = (now - referenceLipTime) / timeBetweenViseme;
         if (skinnedMeshRenderers != null && skinnedMeshRenderers.Count > 0)
         {
-            if (audioSource.isPlaying)
+            if (audioSource.isPlaying || Narrator.isSpeaking())
             {
                 if (now - referenceLipTime > timeBetweenViseme)
                 {
