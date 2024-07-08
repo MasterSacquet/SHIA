@@ -57,6 +57,7 @@ public class LLMDialogManager : MonoBehaviour
     private string _response;
 
     //openMary
+    public int maryTTSPort = 59125;
     public string marylanguage = "en";
     public string mary_voice = "cmu-rms";
 
@@ -287,7 +288,7 @@ public class LLMDialogManager : MonoBehaviour
     public void PlayAudio(string text)
     {
         // need to change player setting to allow non-https connections
-        string maryTTS_request = "http://localhost:59125/process?INPUT_TEXT=" + text.Replace(" ", "+") + "&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE="+marylanguage+"&VOICE=" + mary_voice;
+        string maryTTS_request = "http://localhost:"+maryTTSPort+"/process?INPUT_TEXT=" + text.Replace(" ", "+") + "&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE="+marylanguage+"&VOICE=" + mary_voice;
         Debug.Log("request: " + maryTTS_request);
 
         StartCoroutine(SetAudioClipFromFile(maryTTS_request));
