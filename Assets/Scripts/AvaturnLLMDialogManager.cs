@@ -1,3 +1,4 @@
+using ACTA;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -57,6 +58,8 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     private string _response;
 
     //openMary
+    public bool useMaryTTS = false;
+    public int maryTTSPort = 59125;
     public string marylanguage = "en";
     public string mary_voice = "cmu-rms";
 
@@ -286,11 +289,18 @@ public class AvaturnLLMDialogManager : MonoBehaviour
      */
     public void PlayAudio(string text)
     {
-        // need to change player setting to allow non-https connections
-        string maryTTS_request = "http://localhost:59125/process?INPUT_TEXT=" + text.Replace(" ", "+") + "&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE="+marylanguage+"&VOICE=" + mary_voice;
-        Debug.Log("request: " + maryTTS_request);
+        if (!useMaryTTS)
+        {
+            Narrator.speak(text);
+        }
+        else
+        {
+            // need to change player setting to allow non-https connections
+            string maryTTS_request = "http://localhost:59125/process?INPUT_TEXT=" + text.Replace(" ", "+") + "&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE=" + marylanguage + "&VOICE=" + mary_voice;
+            Debug.Log("request: " + maryTTS_request);
 
-        StartCoroutine(SetAudioClipFromFile(maryTTS_request));
+            StartCoroutine(SetAudioClipFromFile(maryTTS_request));
+        }
     }
 
     IEnumerator SetAudioClipFromFile(string path)

@@ -1,7 +1,8 @@
 ﻿
 using ACTA;
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 /*
  * Ce script gère les expressions faciales et l'animation des lèvres de l'agent.
@@ -10,8 +11,28 @@ using UnityEngine;
 public class FacialExpressionAvaturn : MonoBehaviour
 {
 
+    public class AnimationParameter
+    {
+        private int AUId;
+        public List<string> Names { get; set; }
+        public int Value { get; set; }
+
+        public AnimationParameter(int AUId, List<string> Names)
+        {
+            this.AUId = AUId;
+            this.Names = Names;
+            this.Value = 0;
+        }
+
+    }
+
     public AudioSource audioSource;
     public List<SkinnedMeshRenderer> skinnedMeshRenderers;
+
+    private Dictionary<int, AnimationParameter> faceAnimationParameters;
+    private Dictionary<int, AnimationParameter> faceAnimationParameters_Back;
+    private Dictionary<string, int> visemeAnimationParameters;
+    private Dictionary<string, int> visemeAnimationParameters_Back;
 
 
     private float referenceLipTime;
@@ -25,92 +46,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
     * et la valeur précédente (dans le paramètre Back) afin de pouvoir interpoler ensuite entre ces deux valeurs pour animer en douceur le visage
     */
 
-    //VISEME AVATURN
-    private int viseme_sil = 0;
-    private int viseme_PP = 0;
-    private int viseme_FF = 0;
-    private int viseme_TH = 0;
-    private int viseme_DD = 0;
-
-    private int viseme_kk = 0;
-    private int viseme_CH = 0;
-    private int viseme_SS = 0;
-    private int viseme_nn = 0;
-    private int viseme_RR = 0;
-    private int viseme_aa = 0;
-    private int viseme_E = 0;
-    private int viseme_I = 0;
-    private int viseme_O = 0;
-    private int viseme_U = 0;
-    //VISEME AVATURN BACK
-    private int viseme_sil_back = 0;
-    private int viseme_PP_back = 0;
-    private int viseme_FF_back = 0;
-    private int viseme_TH_back = 0;
-    private int viseme_DD_back = 0;
-
-    private int viseme_kk_back = 0;
-    private int viseme_CH_back = 0;
-    private int viseme_SS_back = 0;
-    private int viseme_nn_back = 0;
-    private int viseme_RR_back = 0;
-    private int viseme_aa_back = 0;
-    private int viseme_E_back = 0;
-    private int viseme_I_back = 0;
-    private int viseme_O_back = 0;
-    private int viseme_U_back = 0;
-    //FACE (expression faciale des émotions par AUs)
-
-    //AU2
-    private int browInnerUp = 0;
-    //AU1//AU4
-    private int browDownLeft = 0;
-    private int browDownRight = 0;
-    //AU5
-    private int eyeWideLeft = 0;
-    private int eyeWideRight = 0;
-    //AU6
-    private int eyeSquintLeft = 0;
-    private int eyeSquintRight = 0;
-    //AU12
-    private int mouthSmileLeft = 0;
-    private int mouthSmileRight = 0;
-    //AU15
-    private int mouthFrownRight = 0;
-    private int mouthFrownLeft = 0;
-    //AU20
-    private int mouthOpen = 0;
-    //AU23
-    private int mouthPucker = 0;
-    //AU26
-    private int jawOpen = 0;
-
-    //FACE_BACK
-    //AU2
-    private int browInnerUp_back = 0;
-    //AU1//AU4
-    private int browDownLeft_back = 0;
-    private int browDownRight_back = 0;
-    //AU5
-    private int eyeWideLeft_back = 0;
-    private int eyeWideRight_back = 0;
-    //AU6
-    private int eyeSquintLeft_back = 0;
-    private int eyeSquintRight_back = 0;
-    //AU12
-    private int mouthSmileLeft_back = 0;
-    private int mouthSmileRight_back = 0;
-    //AU15
-    private int mouthFrownRight_back = 0;
-    private int mouthFrownLeft_back = 0;
-    //AU20
-    private int mouthOpen_back = 0;
-    //AU23
-    private int mouthPucker_back = 0;
-    //AU26
-    private int jawOpen_back = 0;
-
-
+    
     void Start()
     {
         referenceLipTime = Time.time;
@@ -119,6 +55,127 @@ public class FacialExpressionAvaturn : MonoBehaviour
         /*if (SkinnedMeshRendererTarget == null)
             SkinnedMeshRendererTarget = gameObject.GetComponent<SkinnedMeshRenderer>();
         */
+        faceAnimationParameters = new Dictionary<int, AnimationParameter>();
+        faceAnimationParameters_Back = new Dictionary<int, AnimationParameter>();
+        //AU1
+        faceAnimationParameters.Add(1, new AnimationParameter(1, new List<string> { "browInnerUp" }));
+        faceAnimationParameters_Back.Add(1, new AnimationParameter(1, new List<string> { "browInnerUp" }));
+        //AU2
+        faceAnimationParameters.Add(2, new AnimationParameter(2, new List<string> { "browOuterUpLeft", "browOuterUpRight" }));
+        faceAnimationParameters_Back.Add(2, new AnimationParameter(2, new List<string> { "browOuterUpLeft", "browOuterUpRight" }));
+        //AU4
+        faceAnimationParameters.Add(4, new AnimationParameter(4, new List<string> { "browDownLeft", "browDownRight" }));
+        faceAnimationParameters_Back.Add(4, new AnimationParameter(4, new List<string> { "browDownLeft", "browDownRight" }));
+        //AU5
+        faceAnimationParameters.Add(5, new AnimationParameter(5, new List<string> { "eyeWideLeft", "eyeWideRight" }));
+        faceAnimationParameters_Back.Add(5, new AnimationParameter(5, new List<string> { "eyeWideLeft", "eyeWideRight" }));
+        //AU6
+        faceAnimationParameters.Add(6, new AnimationParameter(6, new List<string> { "cheekSquintLeft", "cheekSquintRight" }));
+        faceAnimationParameters_Back.Add(6, new AnimationParameter(6, new List<string> { "cheekSquintLeft", "cheekSquintRight" }));
+        //AU7
+        faceAnimationParameters.Add(7, new AnimationParameter(7, new List<string> { "eyeSquintLeft", "eyeSquintRight" }));
+        faceAnimationParameters_Back.Add(7, new AnimationParameter(7, new List<string> { "eyeSquintLeft", "eyeSquintRight" }));
+        //AU9
+        faceAnimationParameters.Add(9, new AnimationParameter(9, new List<string> { "noseSneerLeft", "noseSneerRight" }));
+        faceAnimationParameters_Back.Add(9, new AnimationParameter(9, new List<string> { "noseSneerLeft", "noseSneerRight" }));
+        //AU10
+        faceAnimationParameters.Add(10, new AnimationParameter(10, new List<string> { "mouthUpperUpLeft", "mouthUpperUpRight" }));
+        faceAnimationParameters_Back.Add(10, new AnimationParameter(10, new List<string> { "mouthUpperUpLeft", "mouthUpperUpRight" }));
+        //AU12
+        faceAnimationParameters.Add(12, new AnimationParameter(12, new List<string> { "mouthSmileLeft", "mouthSmileRight" }));
+        faceAnimationParameters_Back.Add(12, new AnimationParameter(12, new List<string> { "mouthSmileLeft", "mouthSmileRight" }));
+        //AU14
+        faceAnimationParameters.Add(14, new AnimationParameter(14, new List<string> { "mouthDimpleLeft", "mouthDimpleRight" }));
+        faceAnimationParameters_Back.Add(14, new AnimationParameter(14, new List<string> { "mouthDimpleLeft", "mouthDimpleRight" }));
+        //AU15
+        faceAnimationParameters.Add(15, new AnimationParameter(15, new List<string> { "mouthFrownLeft", "mouthFrownRight" }));
+        faceAnimationParameters_Back.Add(15, new AnimationParameter(15, new List<string> { "mouthFrownLeft", "mouthFrownRight" }));
+        //AU16
+        faceAnimationParameters.Add(16, new AnimationParameter(16, new List<string> { "mouthLowerDownLeft", "mouthLowerDownRight" }));
+        faceAnimationParameters_Back.Add(16, new AnimationParameter(16, new List<string> { "mouthLowerDownLeft", "mouthLowerDownRight" }));
+        //AU17
+        faceAnimationParameters.Add(17, new AnimationParameter(17, new List<string> { "mouthShrugLower" }));
+        faceAnimationParameters_Back.Add(17, new AnimationParameter(17, new List<string> { "mouthShrugLower" }));
+        //AU18
+        faceAnimationParameters.Add(18, new AnimationParameter(18, new List<string> { "mouthPucker" }));
+        faceAnimationParameters_Back.Add(18, new AnimationParameter(18, new List<string> { "mouthPucker" }));
+        //AU20
+        faceAnimationParameters.Add(20, new AnimationParameter(20, new List<string> { "mouthStretchLeft", "mouthStretchRight" }));
+        faceAnimationParameters_Back.Add(20, new AnimationParameter(20, new List<string> { "mouthStretchLeft", "mouthStretchRight" }));
+        //AU22
+        faceAnimationParameters.Add(22, new AnimationParameter(22, new List<string> { "mouthFunnel" }));
+        faceAnimationParameters_Back.Add(22, new AnimationParameter(22, new List<string> { "mouthFunnel" }));
+        //AU24
+        faceAnimationParameters.Add(24, new AnimationParameter(24, new List<string> { "mouthPressLeft", "mouthPressRight" }));
+        faceAnimationParameters_Back.Add(24, new AnimationParameter(24, new List<string> { "mouthPressLeft", "mouthPressRight" }));
+        //AU26
+        faceAnimationParameters.Add(26, new AnimationParameter(26, new List<string> { "jawOpen" }));
+        faceAnimationParameters_Back.Add(26, new AnimationParameter(26, new List<string> { "jawOpen" }));
+        //AU27
+        faceAnimationParameters.Add(27, new AnimationParameter(27, new List<string> { "jawOpen" }));
+        faceAnimationParameters_Back.Add(27, new AnimationParameter(27, new List<string> { "jawOpen" }));
+        //AU28
+        faceAnimationParameters.Add(28, new AnimationParameter(28, new List<string> { "mouthRollLower", "mouthRollUpper" }));
+        faceAnimationParameters_Back.Add(28, new AnimationParameter(28, new List<string> { "mouthRollLower", "mouthRollUpper" }));
+        //AD29
+        faceAnimationParameters.Add(29, new AnimationParameter(29, new List<string> { "jawForward" }));
+        faceAnimationParameters_Back.Add(29, new AnimationParameter(29, new List<string> { "jawForward" }));
+        //AD30 but right should be here as well
+        faceAnimationParameters.Add(30, new AnimationParameter(30, new List<string> { "jawLeft" }));
+        faceAnimationParameters_Back.Add(30, new AnimationParameter(30, new List<string> { "jawLeft" }));
+        //AD34
+        faceAnimationParameters.Add(34, new AnimationParameter(34, new List<string> { "cheekPuff" }));
+        faceAnimationParameters_Back.Add(34, new AnimationParameter(34, new List<string> { "cheekPuff" }));
+        //AU45
+        faceAnimationParameters.Add(45, new AnimationParameter(45, new List<string> { "eyeBlink" }));
+        faceAnimationParameters_Back.Add(45, new AnimationParameter(45, new List<string> { "eyeBlink" }));
+        //M63
+        faceAnimationParameters.Add(63, new AnimationParameter(63, new List<string> { "eyeLookUpLeft", "eyeLookUpRight" }));
+        faceAnimationParameters_Back.Add(63, new AnimationParameter(63, new List<string> { "eyeLookUpLeft", "eyeLookUpRight" }));
+        //M64
+        faceAnimationParameters.Add(64, new AnimationParameter(64, new List<string> { "eyeLookDownLeft", "eyeLookDownRight" }));
+        faceAnimationParameters_Back.Add(64, new AnimationParameter(64, new List<string> { "eyeLookDownLeft", "eyeLookDownRight" }));
+        //AU65
+        faceAnimationParameters.Add(65, new AnimationParameter(65, new List<string> { "eyeLookOutLeft", "eyeLookOutRight" }));
+        faceAnimationParameters_Back.Add(65, new AnimationParameter(65, new List<string> { "eyeLookOutLeft", "eyeLookOutRight" }));
+        //AU66
+        faceAnimationParameters.Add(66, new AnimationParameter(66, new List<string> { "eyeLookInLeft", "eyeLookInRight" }));
+        faceAnimationParameters_Back.Add(66, new AnimationParameter(66, new List<string> { "eyeLookInLeft", "eyeLookInRight" }));
+
+        //VISEME
+        visemeAnimationParameters = new Dictionary<string, int>();
+        visemeAnimationParameters_Back = new Dictionary<string, int>();
+
+        visemeAnimationParameters.Add("viseme_sil", 0);
+        visemeAnimationParameters_Back.Add("viseme_sil", 0);
+        visemeAnimationParameters.Add("viseme_PP", 0);
+        visemeAnimationParameters_Back.Add("viseme_PP", 0);
+        visemeAnimationParameters.Add("viseme_FF", 0);
+        visemeAnimationParameters_Back.Add("viseme_FF", 0);
+        visemeAnimationParameters.Add("viseme_TH", 0);
+        visemeAnimationParameters_Back.Add("viseme_TH", 0);
+        visemeAnimationParameters.Add("viseme_DD", 0);
+        visemeAnimationParameters_Back.Add("viseme_DD", 0);
+        visemeAnimationParameters.Add("viseme_kk", 0);
+        visemeAnimationParameters_Back.Add("viseme_kk", 0);
+        visemeAnimationParameters.Add("viseme_CH", 0);
+        visemeAnimationParameters_Back.Add("viseme_CH", 0);
+        visemeAnimationParameters.Add("viseme_SS", 0);
+        visemeAnimationParameters_Back.Add("viseme_SS", 0);
+        visemeAnimationParameters.Add("viseme_nn", 0);
+        visemeAnimationParameters_Back.Add("viseme_nn", 0);
+        visemeAnimationParameters.Add("viseme_RR", 0);
+        visemeAnimationParameters_Back.Add("viseme_RR", 0);
+        visemeAnimationParameters.Add("viseme_aa", 0);
+        visemeAnimationParameters_Back.Add("viseme_aa", 0);
+        visemeAnimationParameters.Add("viseme_E", 0);
+        visemeAnimationParameters_Back.Add("viseme_E", 0);
+        visemeAnimationParameters.Add("viseme_I", 0);
+        visemeAnimationParameters_Back.Add("viseme_I", 0);
+        visemeAnimationParameters.Add("viseme_O", 0);
+        visemeAnimationParameters_Back.Add("viseme_O", 0);
+        visemeAnimationParameters.Add("viseme_U", 0);
+        visemeAnimationParameters_Back.Add("viseme_U", 0);
 
     }
 
@@ -138,7 +195,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
                 if (now - referenceLipTime > timeBetweenViseme)
                 {
                     UpdateLipBackWeight();
-                    choice = Random.Range(0, 11);
+                    choice = UnityEngine.Random.Range(0, 11);
                     referenceLipTime = Time.time;
                     setRandomViseme(choice);
                 }
@@ -175,66 +232,29 @@ public class FacialExpressionAvaturn : MonoBehaviour
             //-peur : AUs 1, 2, 4, 5, 7, 20 et 26
             //-colère : AUs 4, 5, 7 et 23
             //Les AUs n'étant pas directement disponible dans le modèle 3D de Unity, nous les convertissons vers les BlendShapes équivalentes
-            switch (aus[i])
-            {
-
-                case 1: browDownLeft = intensities[i]; browDownRight = intensities[i]; break;
-                case 2: browInnerUp = intensities[i]; break;
-                case 4:
-                    browDownLeft = intensities[i]; browDownLeft = intensities[i]; break;
-                case 5: eyeWideLeft = intensities[i]; eyeWideRight = intensities[i]; break;
-                case 6: eyeSquintLeft = intensities[i]; eyeSquintRight = intensities[i]; break;
-                case 7: eyeSquintLeft = intensities[i]; eyeSquintRight = intensities[i]; break;
-                case 12: mouthSmileLeft = intensities[i]; mouthSmileRight = intensities[i]; break;
-                case 15: mouthFrownLeft = intensities[i]; mouthFrownRight = intensities[i]; break;
-                case 20: mouthOpen = intensities[i]; break;
-                case 23: mouthPucker = intensities[i]; break;
-                case 26: jawOpen = intensities[i]; break;
-                default: break;
-            }
+            faceAnimationParameters[aus[i]].Value = intensities[i];
+            
         }
 
     }
 
     public void UpdateLipBackWeight()
     {
-        viseme_sil_back = viseme_sil;
-        viseme_PP_back = viseme_PP;
-        viseme_FF_back = viseme_FF;
-        viseme_TH_back = viseme_TH;
-        viseme_DD_back = viseme_DD;
-
-        viseme_kk_back = viseme_kk;
-        viseme_CH_back = viseme_CH;
-        viseme_SS_back = viseme_SS;
-        viseme_nn_back = viseme_nn;
-        viseme_RR_back = viseme_RR;
-        viseme_aa_back = viseme_aa;
-        viseme_E_back = viseme_E;
-        viseme_I_back = viseme_I;
-        viseme_O_back = viseme_O;
-        viseme_U_back = viseme_U;
-
+        List<string> values = Enumerable.ToList(visemeAnimationParameters.Keys);
+        foreach (string v in values) 
+        {
+            visemeAnimationParameters_Back[v] = visemeAnimationParameters[v];
+        }
     }
 
     public void UpdateFaceBackWeight()
     {
-        browInnerUp_back = browInnerUp;
-        browDownLeft_back = browDownLeft;
-        browDownRight_back = browDownRight;
-        eyeWideLeft_back = eyeWideLeft;
-        eyeWideRight_back = eyeWideRight;
-        eyeSquintLeft_back = eyeSquintLeft;
-        eyeSquintRight_back = eyeSquintRight;
-        mouthSmileLeft_back = mouthSmileLeft;
-        mouthSmileRight_back = mouthSmileRight;
-        mouthFrownRight_back = mouthFrownLeft;
-        mouthFrownLeft_back = mouthFrownRight;
-        mouthOpen_back = mouthOpen;
-        mouthPucker_back = mouthPucker;
-        jawOpen_back = jawOpen;
+        List<int> values = Enumerable.ToList(faceAnimationParameters.Keys);
+        foreach (int v in values)
+        {
+            faceAnimationParameters_Back[v].Value = faceAnimationParameters[v].Value;
+        }
     }
-
     /*!
        * @brief A function for getting blendshape index by name.
        * @return int
@@ -255,66 +275,30 @@ public class FacialExpressionAvaturn : MonoBehaviour
 
     public void setRandomViseme(int choice)
     {
-
-        switch (choice)
-        {
-            case 0: setViseme_PP(); break;
-            case 1: setViseme_FF(); break;
-            case 2: setViseme_TH(); break;
-            case 3: setViseme_DD(); break;
-            case 4: setViseme_kk(); break;
-            case 5: setViseme_CH(); break;
-            case 6: setViseme_SS(); break;
-            case 7: setViseme_nn(); break;
-            case 8: setViseme_RR(); break;
-            case 9: setViseme_aa(); break;
-            case 10: setViseme_E(); break;
-            case 11: setViseme_I(); break;
-            case 12: setViseme_O(); break;
-            case 13: setViseme_U(); break;
-            default: setViseme_sil(); break;
-
-        }
+        setVisemeNeutral();
+        List<string> values = Enumerable.ToList(visemeAnimationParameters.Keys);
+        visemeAnimationParameters[values.ElementAt(choice)] = 100;
     }
 
 
 
     public void setVisemeNeutral()
     {
-        viseme_sil = 0;
-        viseme_PP = 0;
-        viseme_FF = 0;
-        viseme_TH = 0;
-        viseme_DD = 0;
-
-        viseme_kk = 0;
-        viseme_CH = 0;
-        viseme_SS = 0;
-        viseme_nn = 0;
-        viseme_RR = 0;
-        viseme_aa = 0;
-        viseme_E = 0;
-        viseme_I = 0;
-        viseme_O = 0;
-        viseme_U = 0;
+        List<string> values = Enumerable.ToList(visemeAnimationParameters.Keys);
+        foreach (string v in values)
+        {
+            visemeAnimationParameters[v] = 0;
+        }
+        
     }
 
     public void setFaceNeutral()
     {
-        browInnerUp = 0;
-        browDownLeft = 0;
-        browDownRight = 0;
-        eyeWideLeft = 0;
-        eyeWideRight = 0;
-        eyeSquintLeft = 0;
-        eyeSquintRight = 0;
-        mouthSmileLeft = 0;
-        mouthSmileRight = 0;
-        mouthFrownRight = 0;
-        mouthFrownLeft = 0;
-        mouthOpen = 0;
-        mouthPucker = 0;
-        jawOpen = 0;
+        List<int> values = Enumerable.ToList(faceAnimationParameters.Keys);
+        foreach (int v in values)
+        {
+            faceAnimationParameters[v].Value = 0;
+        }
     }
     /*
      * On vient animer les Blendshapes des lèvres à l'aide de l'interpolation entre nos deux valeurs
@@ -324,38 +308,12 @@ public class FacialExpressionAvaturn : MonoBehaviour
         foreach (SkinnedMeshRenderer SkinnedMeshRendererTarget in skinnedMeshRenderers)
         {
             Mesh m = SkinnedMeshRendererTarget.sharedMesh;
-            int i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_sil");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_sil_back, viseme_sil, lerp));
+            foreach (KeyValuePair<string, int> t in visemeAnimationParameters) {
+            int i = getBlendShapeIndex(SkinnedMeshRendererTarget, t.Key);
+            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(visemeAnimationParameters_Back[t.Key], visemeAnimationParameters[t.Key], lerp));
 
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_PP");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_PP_back, viseme_PP, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_FF");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_FF_back, viseme_FF, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_TH");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_TH_back, viseme_TH, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_DD");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_DD_back, viseme_DD, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_kk");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_kk_back, viseme_kk, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_CH");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_CH_back, viseme_CH, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_SS");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_SS_back, viseme_SS, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_nn");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_nn_back, viseme_nn, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_RR");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_RR_back, viseme_RR, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_aa");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_aa_back, viseme_aa, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_O");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_O_back, viseme_O, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_E");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_E_back, viseme_E, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_I");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_I_back, viseme_I, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "viseme_U");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(viseme_U_back, viseme_U, lerp));
         }
+    }
 
     }
 
@@ -367,124 +325,16 @@ public class FacialExpressionAvaturn : MonoBehaviour
         foreach (SkinnedMeshRenderer SkinnedMeshRendererTarget in skinnedMeshRenderers)
         {
             Mesh m = SkinnedMeshRendererTarget.sharedMesh;
-            int i = getBlendShapeIndex(SkinnedMeshRendererTarget, "browInnerUp");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(browInnerUp_back, browInnerUp, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "browDownLeft");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(browDownLeft_back, browDownLeft, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "browDownRight");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(browDownRight_back, browDownRight, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeWideLeft");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(eyeWideLeft_back, eyeWideLeft, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeWideRight");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(eyeWideRight_back, eyeWideRight, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeSquintLeft");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(eyeSquintLeft_back, eyeSquintLeft, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeSquintRight");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(eyeSquintRight_back, eyeSquintRight, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "mouthSmileLeft");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(mouthSmileLeft_back, mouthSmileLeft, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "mouthSmileRight");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(mouthSmileRight_back, mouthSmileRight, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "mouthFrownRight");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(mouthFrownRight_back, mouthFrownRight, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "mouthFrownLeft");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(mouthFrownLeft_back, mouthFrownLeft, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "mouthOpen");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(mouthOpen_back, mouthOpen, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "mouthPucker");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(mouthPucker_back, mouthPucker, lerp));
-            i = getBlendShapeIndex(SkinnedMeshRendererTarget, "jawOpen");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(jawOpen_back, jawOpen, lerp));
+            foreach (KeyValuePair<int, AnimationParameter> t in faceAnimationParameters)
+            {
+                foreach(string name in t.Value.Names)
+                {
+                    int i = getBlendShapeIndex(SkinnedMeshRendererTarget, name);
+                    SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(faceAnimationParameters_Back[t.Key].Value, faceAnimationParameters[t.Key].Value, lerp));
+
+                }
+            }
         }
     }
-
-
-    public void setViseme_PP()
-    {
-        setVisemeNeutral();
-        viseme_PP = 100;
-    }
-
-    public void setViseme_FF()
-    {
-        setVisemeNeutral();
-        viseme_FF = 100;
-    }
-
-    public void setViseme_TH()
-    {
-        setVisemeNeutral();
-        viseme_TH = 100;
-    }
-
-    public void setViseme_DD()
-    {
-        setVisemeNeutral();
-        viseme_DD = 100;
-    }
-
-    public void setViseme_kk()
-    {
-        setVisemeNeutral();
-        viseme_kk = 100;
-    }
-
-    public void setViseme_CH()
-    {
-        setVisemeNeutral();
-        viseme_CH = 100;
-    }
-
-    public void setViseme_SS()
-    {
-        setVisemeNeutral();
-        viseme_SS = 100;
-    }
-
-    public void setViseme_nn()
-    {
-        setVisemeNeutral();
-        viseme_nn = 100;
-    }
-
-    public void setViseme_RR()
-    {
-        setVisemeNeutral();
-        viseme_RR = 100;
-    }
-
-    public void setViseme_aa()
-    {
-        setVisemeNeutral();
-        viseme_aa = 100;
-    }
-    public void setViseme_E()
-    {
-        setVisemeNeutral();
-        viseme_E = 100;
-    }
-    public void setViseme_I()
-    {
-        setVisemeNeutral();
-        viseme_I = 100;
-    }
-    public void setViseme_O()
-    {
-        setVisemeNeutral();
-        viseme_O = 100;
-    }
-    public void setViseme_U()
-    {
-        setVisemeNeutral();
-        viseme_U = 100;
-    }
-    public void setViseme_sil()
-    {
-        setVisemeNeutral();
-        viseme_sil = 100;
-    }
-
-
-
 
 }
