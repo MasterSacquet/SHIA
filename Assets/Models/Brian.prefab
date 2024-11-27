@@ -74,9 +74,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 8733374107820852799, guid: 6c8dacdcc2e82a244b63df259f891b2d, type: 3}
-    - {fileID: -7586442378534999268, guid: 6c8dacdcc2e82a244b63df259f891b2d, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
@@ -102,18 +100,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6037652709372903977}
+      addedObject: {fileID: 6001228673146745531}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 7474477940224653697}
   m_SourcePrefab: {fileID: 100100000, guid: 6c8dacdcc2e82a244b63df259f891b2d, type: 3}
---- !u!137 &1312620349554041272 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -3374615691573484913, guid: 6c8dacdcc2e82a244b63df259f891b2d,
-    type: 3}
-  m_PrefabInstance: {fileID: 4836208116810089271}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1383252442818210416 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -3445282936980674233, guid: 6c8dacdcc2e82a244b63df259f891b2d,
@@ -123,12 +115,6 @@ Transform:
 --- !u!4 &3982029666919056027 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8385327893941879212, guid: 6c8dacdcc2e82a244b63df259f891b2d,
-    type: 3}
-  m_PrefabInstance: {fileID: 4836208116810089271}
-  m_PrefabAsset: {fileID: 0}
---- !u!137 &4799923586915685654 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -9114889020240603615, guid: 6c8dacdcc2e82a244b63df259f891b2d,
     type: 3}
   m_PrefabInstance: {fileID: 4836208116810089271}
   m_PrefabAsset: {fileID: 0}
@@ -331,12 +317,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSource: {fileID: 1437242005031012267}
-  skinnedMeshRenderers:
-  - {fileID: 9077687305641857882}
-  - {fileID: 4799923586915685654}
-  - {fileID: 1312620349554041272}
-  - {fileID: 7243220833717832370}
---- !u!114 &6037652709372903977
+  skinnedMeshRenderers: []
+--- !u!114 &6001228673146745531
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -345,10 +327,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5754686051043950182}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7bd2d2aa60328d47b18efc2191f08ab, type: 3}
+  m_Script: {fileID: 11500000, guid: de00d8c1aa067a14691629ea8a19fae1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 1437242005031012267}
+  audioSource: {fileID: 0}
   volume: 0.5
   informationPanel: {fileID: 0}
   textPanel: {fileID: 0}
@@ -360,17 +342,13 @@ MonoBehaviour:
   microphoneRecord: {fileID: 5542582519226612422}
   streamSegments: 1
   printLanguage: 0
-  urlOllama: http://hardcore_engelbart:SvJk7h7gir@51.75.198.101:10189/
-  modelName: mistral:instruct
-  preprompt: "Tu es Brian, le meilleur enseignant-chercheur de Paris-Saclay. Tu r\xE9ponds
-    avec des phrases tr\xE8s courtes. Tu exprimes facilement tes \xE9motions. Tu
-    ins\xE8res toujours un et un seul tag \xE9motionnel dans tes r\xE9ponses de la
-    forme {TAG} o\xF9 tu remplaces TAG par une des \xE9motions suivantes, JOY, SAD
-    ou ANGER."
+  urlOllama: 
+  modelName: 
+  preprompt: 
   useMaryTTS: 0
   maryTTSPort: 59125
-  marylanguage: fr
-  mary_voice: upmc-pierre-hsmm
+  marylanguage: en
+  mary_voice: cmu-rms
 --- !u!114 &7474477940224653697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,21 +363,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mode: 0
   voiceIdx: 3
---- !u!137 &7243220833717832370 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2853240716290050437, guid: 6c8dacdcc2e82a244b63df259f891b2d,
-    type: 3}
-  m_PrefabInstance: {fileID: 4836208116810089271}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8565839117177429712 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3873747568480624103, guid: 6c8dacdcc2e82a244b63df259f891b2d,
-    type: 3}
-  m_PrefabInstance: {fileID: 4836208116810089271}
-  m_PrefabAsset: {fileID: 0}
---- !u!137 &9077687305641857882 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -4690563698735411091, guid: 6c8dacdcc2e82a244b63df259f891b2d,
     type: 3}
   m_PrefabInstance: {fileID: 4836208116810089271}
   m_PrefabAsset: {fileID: 0}
