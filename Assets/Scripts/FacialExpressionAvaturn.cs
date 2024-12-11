@@ -37,8 +37,11 @@ public class FacialExpressionAvaturn : MonoBehaviour
 
     private float referenceLipTime;
     private float referenceFaceTime;
+    private float referenceBlinkTime;
+    private float deltaBlink;
     private int choice;
     private float timeBetweenViseme = 0.175f;
+    private float timeBetweenBlink = 5.000f;
     private float facialExpressionDuration = 2.0f;
     private int[] aus = { 0 };
 
@@ -46,11 +49,12 @@ public class FacialExpressionAvaturn : MonoBehaviour
     * et la valeur précédente (dans le paramètre Back) afin de pouvoir interpoler ensuite entre ces deux valeurs pour animer en douceur le visage
     */
 
-    
+
     void Start()
     {
         referenceLipTime = Time.time;
         referenceFaceTime = Time.time;
+        referenceBlinkTime = Time.time;
         audioSource = GetComponent<AudioSource>();
         /*if (SkinnedMeshRendererTarget == null)
             SkinnedMeshRendererTarget = gameObject.GetComponent<SkinnedMeshRenderer>();
@@ -218,6 +222,19 @@ public class FacialExpressionAvaturn : MonoBehaviour
             lerpFace(faceLerp);
 
         }
+        //Blink
+        if (now > referenceBlinkTime + timeBetweenBlink + deltaBlink)
+        {
+            blink();
+
+        }
+        if (now > referenceBlinkTime + timeBetweenBlink + deltaBlink + 0.2f)
+        {
+            unblink();
+            referenceBlinkTime = now;
+            deltaBlink = UnityEngine.Random.Range(-1.0f, 1.0f);
+        }
+
     }
 
     public void setFacialAUs(int[] aus, int[] intensities, float duration)
@@ -233,7 +250,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
             //-colère : AUs 4, 5, 7 et 23
             //Les AUs n'étant pas directement disponible dans le modèle 3D de Unity, nous les convertissons vers les BlendShapes équivalentes
             faceAnimationParameters[aus[i]].Value = intensities[i];
-            
+
         }
 
     }
@@ -241,7 +258,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
     public void UpdateLipBackWeight()
     {
         List<string> values = Enumerable.ToList(visemeAnimationParameters.Keys);
-        foreach (string v in values) 
+        foreach (string v in values)
         {
             visemeAnimationParameters_Back[v] = visemeAnimationParameters[v];
         }
@@ -270,7 +287,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
                 return i;
         }
 
-        return 0;
+        return -1;
     }
 
     public void setRandomViseme(int choice)
@@ -289,7 +306,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
         {
             visemeAnimationParameters[v] = 0;
         }
-        
+
     }
 
     public void setFaceNeutral()
@@ -308,12 +325,14 @@ public class FacialExpressionAvaturn : MonoBehaviour
         foreach (SkinnedMeshRenderer SkinnedMeshRendererTarget in skinnedMeshRenderers)
         {
             Mesh m = SkinnedMeshRendererTarget.sharedMesh;
-            foreach (KeyValuePair<string, int> t in visemeAnimationParameters) {
-            int i = getBlendShapeIndex(SkinnedMeshRendererTarget, t.Key);
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(visemeAnimationParameters_Back[t.Key], visemeAnimationParameters[t.Key], lerp));
+            foreach (KeyValuePair<string, int> t in visemeAnimationParameters)
+            {
+                int i = getBlendShapeIndex(SkinnedMeshRendererTarget, t.Key);
+                if (i >= 0)
+                    SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(visemeAnimationParameters_Back[t.Key], visemeAnimationParameters[t.Key], lerp));
 
+            }
         }
-    }
 
     }
 
@@ -327,13 +346,48 @@ public class FacialExpressionAvaturn : MonoBehaviour
             Mesh m = SkinnedMeshRendererTarget.sharedMesh;
             foreach (KeyValuePair<int, AnimationParameter> t in faceAnimationParameters)
             {
-                foreach(string name in t.Value.Names)
+                foreach (string name in t.Value.Names)
                 {
                     int i = getBlendShapeIndex(SkinnedMeshRendererTarget, name);
+                    if(i>=0)
                     SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(faceAnimationParameters_Back[t.Key].Value, faceAnimationParameters[t.Key].Value, lerp));
 
                 }
             }
+        }
+    }
+
+    public void blink()
+    {
+        foreach (SkinnedMeshRenderer SkinnedMeshRendererTarget in skinnedMeshRenderers)
+        {
+            Mesh m = SkinnedMeshRendererTarget.sharedMesh;
+            
+            int i = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeBlinkLeft");
+            int j = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeBlinkRight");
+            if (i >= 0 && j >= 0)
+            {
+                SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 100);
+                SkinnedMeshRendererTarget.SetBlendShapeWeight(j, 100);
+            }
+
+
+        }
+    }
+    public void unblink()
+    {
+        foreach (SkinnedMeshRenderer SkinnedMeshRendererTarget in skinnedMeshRenderers)
+        {
+            Mesh m = SkinnedMeshRendererTarget.sharedMesh;
+
+            int i = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeBlinkLeft");
+            int j = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeBlinkRight");
+            if (i >= 0 && j >= 0)
+            {
+                SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 0);
+                SkinnedMeshRendererTarget.SetBlendShapeWeight(j, 0);
+            }
+
         }
     }
 
