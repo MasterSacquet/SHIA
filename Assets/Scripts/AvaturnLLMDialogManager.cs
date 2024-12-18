@@ -48,6 +48,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     private string _buffer;
 
     //conversation memory
+    public int numberOfTurn = 10;
     private Queue<String> conversationList;
 
     //LLM
@@ -112,7 +113,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
         textp.text = text;
         conversationList.Enqueue("USER:"+text);
-        if(conversationList.Count>10)
+        if(conversationList.Count> numberOfTurn)
             conversationList.Dequeue();
         string fullconv = "";
         foreach(String s in conversationList)
@@ -169,7 +170,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
         textp.text = text;
         conversationList.Enqueue("USER:"+text);
-        if (conversationList.Count > 10)
+        if (conversationList.Count > numberOfTurn)
             conversationList.Dequeue();
         string fullconv = "";
         foreach (String s in conversationList)
@@ -231,8 +232,8 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             _response = _response.Substring(pos+11, endpos);
             InformationDisplay(_response);
             _response = ProcessAffectiveContent(_response);
-            conversationList.Enqueue("SYSTEM:"+_response);
-            if (conversationList.Count > 10)
+            conversationList.Enqueue("ASSISTANT:"+_response);
+            if (conversationList.Count > numberOfTurn)
                 conversationList.Dequeue();
             PlayAudio(_response);
         }
@@ -260,7 +261,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         if (string.IsNullOrEmpty(prompt))
             return;
         //StartCoroutine(postRequest(urlOllama+ "api/chat", "{\"model\": \""+ modelName + "\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
-        StartCoroutine(postRequest(urlOllama+ "api/generate", "{\"model\": \""+ modelName + "\",\"system\": \""+preprompt+"\",\"prompt\": \""+prompt+"\",\"stream\": false}"));        
+        StartCoroutine(postRequest(urlOllama+ "api/generate", "{\"model\": \""+ modelName + "\",\"system\": \""+preprompt+"\",\"prompt\": \"You provide the next ASSISTANT response in this conversation :"+prompt+"\",\"stream\": false}"));        
     }
 
    
