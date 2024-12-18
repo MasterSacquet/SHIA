@@ -480,7 +480,7 @@ PrefabInstance:
     - target: {fileID: 4942437626581804252, guid: 0803849357987d8439edeae3b5953572,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.57
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4942437626581804252, guid: 0803849357987d8439edeae3b5953572,
         type: 3}
@@ -532,6 +532,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: Brian
       objectReference: {fileID: 0}
+    - target: {fileID: 5754686051043950182, guid: 0803849357987d8439edeae3b5953572,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6001228673146745531, guid: 0803849357987d8439edeae3b5953572,
+        type: 3}
+      propertyPath: modelName
+      value: llama3.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6001228673146745531, guid: 0803849357987d8439edeae3b5953572,
+        type: 3}
+      propertyPath: preprompt
+      value: "Tu t'appelles Bob et tu es un guide pour les nouveaux \xE9tudiants
+        de CentraleSupelec. Tu fais des r\xE9ponses courtes et tu souhaites que tout
+        le monde passe un bon moment."
+      objectReference: {fileID: 0}
     - target: {fileID: 6001228673146745531, guid: 0803849357987d8439edeae3b5953572,
         type: 3}
       propertyPath: textPanel
@@ -539,9 +556,24 @@ PrefabInstance:
       objectReference: {fileID: 908807773}
     - target: {fileID: 6001228673146745531, guid: 0803849357987d8439edeae3b5953572,
         type: 3}
+      propertyPath: urlOllama
+      value: http://localhost:11434/
+      objectReference: {fileID: 0}
+    - target: {fileID: 6001228673146745531, guid: 0803849357987d8439edeae3b5953572,
+        type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1649129519}
+    - target: {fileID: 6001228673146745531, guid: 0803849357987d8439edeae3b5953572,
+        type: 3}
       propertyPath: buttonPanel
       value: 
       objectReference: {fileID: 1863857403}
+    - target: {fileID: 6001228673146745531, guid: 0803849357987d8439edeae3b5953572,
+        type: 3}
+      propertyPath: numberOfTurn
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6001228673146745531, guid: 0803849357987d8439edeae3b5953572,
         type: 3}
       propertyPath: informationPanel
@@ -763,6 +795,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: afcb50b7d4a1ede4b8a490cc50003ad7, type: 3}
+--- !u!82 &1649129519 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 1437242005031012267, guid: 0803849357987d8439edeae3b5953572,
+    type: 3}
+  m_PrefabInstance: {fileID: 1016183052}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1819316030
 GameObject:
   m_ObjectHideFlags: 0
@@ -927,6 +965,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lara
       objectReference: {fileID: 0}
+    - target: {fileID: 4497471555607062800, guid: becdef54031a44d41a6a236238d06ddd,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5218800838974715953, guid: becdef54031a44d41a6a236238d06ddd,
         type: 3}
       propertyPath: audioSource
@@ -957,6 +1000,79 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: becdef54031a44d41a6a236238d06ddd, type: 3}
+--- !u!1001 &4219013299963019054
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 445348291142154115, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_Name
+      value: Lucas
+      objectReference: {fileID: 0}
+    - target: {fileID: 445348291142154115, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2d6065db2e3517b4db090ab89b5ccbff, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -967,3 +1083,4 @@ SceneRoots:
   - {fileID: 1533015125}
   - {fileID: 1016183052}
   - {fileID: 1777288467113804548}
+  - {fileID: 4219013299963019054}
