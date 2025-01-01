@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Windows;
@@ -205,6 +206,11 @@ public class AvaturnLLMDialogManager : MonoBehaviour
      * LLM
      */
 
+    private string RemoveWhitespacesCustom(string source)
+    {
+        return Regex.Replace(source, @"\s", " ").Replace("\n"," ").Replace("\\","");
+    }
+
     IEnumerator postRequest(string url, string json)
     {
         var uwr = new UnityWebRequest(url, "POST");
@@ -230,6 +236,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             int endpos = _response.Substring(pos + 11).IndexOf("\"");
             Debug.Log(endpos);
             _response = _response.Substring(pos+11, endpos);
+            _response = RemoveWhitespacesCustom(_response);
             InformationDisplay(_response);
             _response = ProcessAffectiveContent(_response);
             conversationList.Enqueue("ASSISTANT:"+_response);
@@ -261,7 +268,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         if (string.IsNullOrEmpty(prompt))
             return;
         //StartCoroutine(postRequest(urlOllama+ "api/chat", "{\"model\": \""+ modelName + "\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
-        StartCoroutine(postRequest(urlOllama+ "api/generate", "{\"model\": \""+ modelName + "\",\"system\": \""+preprompt+"\",\"prompt\": \"You provide the next ASSISTANT response in this conversation :"+prompt+"\",\"stream\": false}"));        
+        StartCoroutine(postRequest(urlOllama+ "api/generate", "{\"model\": \""+ modelName + "\",\"system\": \""+ RemoveWhitespacesCustom(preprompt) + "\",\"prompt\": \"You provide the next ASSISTANT response in this conversation :"+prompt+"\",\"stream\": false}"));        
     }
 
    
