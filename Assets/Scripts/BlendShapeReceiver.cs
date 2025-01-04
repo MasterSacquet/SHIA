@@ -89,13 +89,16 @@ public class BlendShapeReceiver : MonoBehaviour
                 BlendShapeInfoCollection bsic = BlendShapeInfoCollection.CreateFromJSON(e.Data);
                 foreach (Category bsi in bsic.categories)
                 {
-                    if (BlendShapeReceiver.mainBSR.blenshapesValues.ContainsKey(bsi.categoryName))
-                    {
-                        BlendShapeReceiver.mainBSR.blenshapesValues[bsi.categoryName] = (int)(bsi.score * 100);
-                    }
-                    else
-                    {
-                        BlendShapeReceiver.mainBSR.blenshapesValues.Add(bsi.categoryName, (int)(bsi.score * 100));
+                    lock (BlendShapeReceiver.mainBSR.blenshapesValues)
+                    { 
+                        if (BlendShapeReceiver.mainBSR.blenshapesValues.ContainsKey(bsi.categoryName))
+                        {
+                            BlendShapeReceiver.mainBSR.blenshapesValues[bsi.categoryName] = (int)(bsi.score * 100);
+                        }
+                        else
+                        {
+                            BlendShapeReceiver.mainBSR.blenshapesValues.Add(bsi.categoryName, (int)(bsi.score * 100));
+                        }
                     }
                 }
             }
@@ -138,12 +141,14 @@ public class BlendShapeReceiver : MonoBehaviour
         {
             try
             {
-                foreach (KeyValuePair<string, int> kvp in blenshapesValues)
+                lock (BlendShapeReceiver.mainBSR.blenshapesValues)
                 {
-                    if (getBlendShapeIndex(smr, kvp.Key) != -1)
-                        smr.SetBlendShapeWeight(getBlendShapeIndex(smr, kvp.Key), blenshapesValues[kvp.Key]);
+                    foreach (KeyValuePair<string, int> kvp in blenshapesValues)
+                    {
+                        if (getBlendShapeIndex(smr, kvp.Key) != -1)
+                            smr.SetBlendShapeWeight(getBlendShapeIndex(smr, kvp.Key), blenshapesValues[kvp.Key]);
+                    }
                 }
-
             }
             catch (Exception ex)
             {
