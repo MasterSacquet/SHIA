@@ -11,10 +11,9 @@
 <body>
   <div class="container">
   <button id="webcamButton" class="mdc-button mdc-button--raised">
-        <span class="mdc-button__ripple"></span>
-        <span class="mdc-button__label">ENABLE WEBCAM</span>
+        ENABLE WEBCAM
       </button>
-    <video class="input_video" style="display:inline;"></video>
+    <video class="input_video" style="display:None;"></video>
     <canvas class="output_canvas" width="1280px" height="720px"></canvas>
   </div>
   <div class="blend-shapes">
@@ -65,7 +64,6 @@ const videoBlendShapes = document.getElementById("video-blend-shapes");
 let faceLandmarker;
 let runningMode = "IMAGE";
 let webcamRunning = false;
-const videoWidth = 1280;
 
 
 // Before we can use HandLandmarker class we must wait for it to finish
@@ -92,7 +90,16 @@ enableWebcamButton.addEventListener("click", enableCam);
 
 // Enable the live webcam view and start detection.
 function enableCam(event) {
+	if(!webcamRunning){
   camera.start();
+  enableWebcamButton.innerHTML = "DISABLE WEBCAM";
+  webcamRunning = true;
+  }else
+  {
+	camera.stop();
+  enableWebcamButton.innerHTML = "ENABLE WEBCAM";
+  webcamRunning = false;
+  }
 }
 
 const camera = new Camera(videoElement, {
@@ -105,7 +112,8 @@ const camera = new Camera(videoElement, {
     socket.send(dataJSON);
 	
     console.log("Tableau envoyé !");
-  
+	
+  canvasCtx.drawImage(videoElement,0,0);
   const drawingUtils = new DrawingUtils(canvasCtx);
   for (const landmarks of faceLandmarkerResult.faceLandmarks) {
     drawingUtils.drawConnectors(
@@ -153,9 +161,10 @@ const camera = new Camera(videoElement, {
     );
   }
   drawBlendShapes(imageBlendShapes, faceLandmarkerResult.faceBlendshapes);
+  
   },
-  width: 480,
-  height: 640
+  width: 1280,
+  height: 720
 });
 
 
