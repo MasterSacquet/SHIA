@@ -85,7 +85,7 @@ public class BlendShapeReceiver : MonoBehaviour
             try
             {
                 // Reçoit le message JSON
-
+                
                 BlendShapeInfoCollection bsic = BlendShapeInfoCollection.CreateFromJSON(e.Data);
                 foreach (Category bsi in bsic.categories)
                 {

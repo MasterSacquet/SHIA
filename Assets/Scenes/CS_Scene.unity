@@ -255,8 +255,8 @@ MonoBehaviour:
   streamSegments: 1
   printLanguage: 0
   numberOfTurn: 4
-  urlOllama: http://localhost:11434/
-  modelName: llama3.2
+  urlOllama: http://login:password@ip:port/
+  modelName: mistral:instruct
   preprompt: "Tu t'appelles Mike et tu es un guide pour les nouveaux \xE9tudiants
     de CentraleSupelec. Tu fais des r\xE9ponses courtes et tu souhaites que tout
     le monde passe un bon moment."
@@ -819,6 +819,11 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 5f6902390174c1444a89584be7760910, type: 2}
+    - target: {fileID: 6594903253502621507, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
