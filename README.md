@@ -43,7 +43,7 @@ Now, MikeTPA 2.0 uses a AvaturnLLMDialogManager class which is implemented to se
 - Thanks to Julien Saunier for the OpenMary integration. 
 - Emotion recognition from [Omar Ayman](https://github.com/otaha178/Emotion-recognition)
 - WebSocket implementation from [STA](https://github.com/sta/websocket-sharp)
-- WindowsTTS wrapper adapter from [Chad Weisshaar](https://chadweisshaar.com/blog/2015/07/02/microsoft-speech-for-unity/)
+- WindowsTTS wrapper adapted from [Chad Weisshaar](https://chadweisshaar.com/blog/2015/07/02/microsoft-speech-for-unity/) and [Jinky Jung](https://github.com/VirtualityForSafety/UnityWindowsTTS)
 
 
 If you use Mike the PA in one of your projects, citing this repository is appreciated.
