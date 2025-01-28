@@ -527,6 +527,16 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 919335117898982130, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: port
+      value: 26950
+      objectReference: {fileID: 0}
+    - target: {fileID: 919335117898982130, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: m_LocalPosition.x
