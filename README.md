@@ -39,9 +39,12 @@ Now, MikeTPA 2.0 uses a AvaturnLLMDialogManager class which is implemented to se
 
 # Credits
 
-Original 3D Model from [Mike Alger](https://mikealger.com/portfolio/avatar#top), prerendered animations from [Mixamo](https://www.mixamo.com), current 3D models from Avaturn.
+- Original 3D Model from [Mike Alger](https://mikealger.com/portfolio/avatar#top), prerendered animations from [Mixamo](https://www.mixamo.com), current 3D models from Avaturn.
+- Thanks to [Julien Saunier](https://pagesperso.litislab.fr/~jsaunier/) for the OpenMary integration. 
+- Emotion recognition from [Omar Ayman](https://github.com/otaha178/Emotion-recognition)
+- WebSocket implementation from [STA](https://github.com/sta/websocket-sharp)
+- WindowsTTS wrapper adapted from [Chad Weisshaar](https://chadweisshaar.com/blog/2015/07/02/microsoft-speech-for-unity/) and [Jinky Jung](https://github.com/VirtualityForSafety/UnityWindowsTTS)
 
-Thanks to Julien Saunier for the OpenMary integration. 
 
 If you use Mike the PA in one of your projects, citing this repository is appreciated.
 
