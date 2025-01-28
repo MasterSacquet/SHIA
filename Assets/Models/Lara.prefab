@@ -105,6 +105,18 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1168713496550866868}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1310423168250156322}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3577582993789500566}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5006744893018922364}
   m_SourcePrefab: {fileID: 100100000, guid: 2d6c704f4c2d03b44bf371f1a90998f7, type: 3}
 --- !u!4 &533962150897437094 stripped
 Transform:
@@ -323,14 +335,16 @@ MonoBehaviour:
   buttonPanel: {fileID: 0}
   ButtonPrefab: {fileID: 3881083886603802510, guid: 1ea7a58cf14e24f43b8e938fe4b07137,
     type: 3}
-  faceExpression: {fileID: 0}
+  faceExpression: {fileID: 5218800838974715953}
   whisper: {fileID: 4271549096328786916}
   microphoneRecord: {fileID: 3978171389712430266}
   streamSegments: 1
   printLanguage: 0
-  urlOllama: 
-  modelName: 
-  preprompt: 
+  numberOfTurn: 4
+  urlOllama: http://localhost:11434/
+  modelName: llama3.2
+  preprompt: "Tu es Alice, la pr\xE9sidente du conseil des \xE9tudiants de CentraleSupelec.
+    Tu r\xE9ponds avec des phrases courtes et pr\xE9cises."
   useMaryTTS: 0
   maryTTSPort: 59125
   marylanguage: en
@@ -348,7 +362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mode: 0
-  voiceIdx: 3
+  voiceIdx: 0
 --- !u!114 &5218800838974715953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -387,6 +401,54 @@ MonoBehaviour:
   spine: {fileID: 4332046766773084005}
   target: {fileID: 0}
   speed: 1
+--- !u!114 &1310423168250156322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4497471555607062800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e1a4253952d4e14d9f937ebf643def7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 7188245235907717584}
+  dialogManager: {fileID: 7068121327761383866}
+--- !u!114 &3577582993789500566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4497471555607062800}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 985fb4da15468e940b651cffc043763c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  port: 0
+--- !u!114 &5006744893018922364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4497471555607062800}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe2a800357692241b6795f4a3056665, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 886248660569179180}
+  - {fileID: 7194749885315838789}
+  - {fileID: 1547299156159365517}
+  - {fileID: 3686825105765139040}
+  - {fileID: 7170196475654272718}
+  - {fileID: 1527824237145529796}
+  url: ws://localhost
+  port: 8080
 --- !u!4 &5113265726210725357 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8385327893941879212, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
@@ -402,6 +464,12 @@ Transform:
 --- !u!137 &7170196475654272718 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: -3374615691573484913, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
+    type: 3}
+  m_PrefabInstance: {fileID: 3651103581801337921}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &7188245235907717584 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
     type: 3}
   m_PrefabInstance: {fileID: 3651103581801337921}
   m_PrefabAsset: {fileID: 0}
