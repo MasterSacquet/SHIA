@@ -522,20 +522,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mike
       objectReference: {fileID: 0}
-    - target: {fileID: 445348291142154115, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 919335117898982130, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: port
       value: 26950
-      objectReference: {fileID: 0}
-    - target: {fileID: 919335117898982130, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
@@ -607,16 +597,6 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 963194228}
-    - target: {fileID: 6594903253502621507, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 5f6902390174c1444a89584be7760910, type: 2}
-    - target: {fileID: 6594903253502621507, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -635,11 +615,6 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 963194228}
-    - target: {fileID: 3273595841542405640, guid: becdef54031a44d41a6a236238d06ddd,
-        type: 3}
-      propertyPath: voiceIdx
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3828598587874456490, guid: becdef54031a44d41a6a236238d06ddd,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -702,40 +677,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
         type: 3}
-      propertyPath: modelName
-      value: llama3.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
-        type: 3}
-      propertyPath: preprompt
-      value: "Tu es Alice, la pr\xE9sidente du conseil des \xE9tudiants de CentraleSupelec.
-        Tu r\xE9ponds avec des phrases courtes et pr\xE9cises."
-      objectReference: {fileID: 0}
-    - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
-        type: 3}
       propertyPath: textPanel
       value: 
       objectReference: {fileID: 1533015127}
     - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
         type: 3}
-      propertyPath: urlOllama
-      value: http://localhost:11434/
-      objectReference: {fileID: 0}
-    - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
-        type: 3}
       propertyPath: buttonPanel
       value: 
       objectReference: {fileID: 1533015126}
-    - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
-        type: 3}
-      propertyPath: numberOfTurn
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
-        type: 3}
-      propertyPath: faceExpression
-      value: 
-      objectReference: {fileID: 1393801961}
     - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
         type: 3}
       propertyPath: informationPanel
@@ -746,18 +695,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: becdef54031a44d41a6a236238d06ddd, type: 3}
---- !u!114 &1393801961 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5218800838974715953, guid: becdef54031a44d41a6a236238d06ddd,
-    type: 3}
-  m_PrefabInstance: {fileID: 1192350120}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2de879243f4e0a43a8f3817600f13a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1533015125
 PrefabInstance:
   m_ObjectHideFlags: 0

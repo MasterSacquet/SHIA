@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 6c8dacdcc2e82a244b63df259f891b2d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.57
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6c8dacdcc2e82a244b63df259f891b2d,
         type: 3}
@@ -110,6 +110,18 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 7474477940224653697}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5618472450993573212}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8448986266016460317}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 140854072258029511}
   m_SourcePrefab: {fileID: 100100000, guid: 6c8dacdcc2e82a244b63df259f891b2d, type: 3}
 --- !u!137 &1312620349554041272 stripped
 SkinnedMeshRenderer:
@@ -120,6 +132,12 @@ SkinnedMeshRenderer:
 --- !u!137 &1328025409655612467 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: -3354141883874629884, guid: 6c8dacdcc2e82a244b63df259f891b2d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4836208116810089271}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1330598191339617958 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 6c8dacdcc2e82a244b63df259f891b2d,
     type: 3}
   m_PrefabInstance: {fileID: 4836208116810089271}
   m_PrefabAsset: {fileID: 0}
@@ -347,6 +365,48 @@ MonoBehaviour:
   - {fileID: 4799923586915685654}
   - {fileID: 1312620349554041272}
   - {fileID: 7243220833717832370}
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.24333954
+      value: 0.97926486
+      inSlope: 0.11309672
+      outSlope: 0.11309672
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.61644816
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.8034302
+      value: 0.9830305
+      inSlope: -0.1072192
+      outSlope: -0.5787092
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.28581917
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.9867951
+      value: 0.008237183
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &6001228673146745531
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,7 +419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de00d8c1aa067a14691629ea8a19fae1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 1437242005031012267}
   volume: 0.5
   informationPanel: {fileID: 0}
   textPanel: {fileID: 0}
@@ -371,9 +431,12 @@ MonoBehaviour:
   microphoneRecord: {fileID: 5542582519226612422}
   streamSegments: 1
   printLanguage: 0
-  urlOllama: 
-  modelName: 
-  preprompt: 
+  numberOfTurn: 2
+  urlOllama: http://localhost:11434/
+  modelName: deepseek-r1:7b
+  preprompt: "Tu t'appelles Bob et tu es un guide pour les nouveaux \xE9tudiants
+    de CentraleSupelec. Tu fais des r\xE9ponses courtes et tu souhaites que tout
+    le monde passe un bon moment."
   useMaryTTS: 0
   maryTTSPort: 59125
   marylanguage: en
@@ -392,6 +455,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mode: 0
   voiceIdx: 3
+--- !u!114 &5618472450993573212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5754686051043950182}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fe2a800357692241b6795f4a3056665, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderers:
+  - {fileID: 9077687305641857882}
+  - {fileID: 1328025409655612467}
+  - {fileID: 7264278256513931003}
+  - {fileID: 4799923586915685654}
+  - {fileID: 1312620349554041272}
+  - {fileID: 7243220833717832370}
+  url: ws://localhost
+  port: 8080
+--- !u!114 &8448986266016460317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5754686051043950182}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 985fb4da15468e940b651cffc043763c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  port: 0
+--- !u!114 &140854072258029511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5754686051043950182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e1a4253952d4e14d9f937ebf643def7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1330598191339617958}
+  dialogManager: {fileID: 6001228673146745531}
 --- !u!137 &7243220833717832370 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2853240716290050437, guid: 6c8dacdcc2e82a244b63df259f891b2d,

@@ -30,7 +30,6 @@ public class FacialExpressionAvaturn : MonoBehaviour
     public List<SkinnedMeshRenderer> skinnedMeshRenderers;
 
     private Dictionary<int, AnimationParameter> faceAnimationParameters;
-    private Dictionary<int, AnimationParameter> faceAnimationParameters_Back;
     private Dictionary<string, int> visemeAnimationParameters;
     private Dictionary<string, int> visemeAnimationParameters_Back;
 
@@ -44,6 +43,8 @@ public class FacialExpressionAvaturn : MonoBehaviour
     private float timeBetweenBlink = 5.000f;
     private float facialExpressionDuration = 2.0f;
     private int[] aus = { 0 };
+
+    public AnimationCurve animationCurve = AnimationCurve.EaseInOut(0.0f,0.0f,1.0f,1.0f);
 
     /*Pour chaque paramètre du visage, on va conserver la valeur cible, vers laquelle on souhaite que le muscle du visage aille,
     * et la valeur précédente (dans le paramètre Back) afin de pouvoir interpoler ensuite entre ces deux valeurs pour animer en douceur le visage
@@ -60,92 +61,63 @@ public class FacialExpressionAvaturn : MonoBehaviour
             SkinnedMeshRendererTarget = gameObject.GetComponent<SkinnedMeshRenderer>();
         */
         faceAnimationParameters = new Dictionary<int, AnimationParameter>();
-        faceAnimationParameters_Back = new Dictionary<int, AnimationParameter>();
         //AU1
         faceAnimationParameters.Add(1, new AnimationParameter(1, new List<string> { "browInnerUp" }));
-        faceAnimationParameters_Back.Add(1, new AnimationParameter(1, new List<string> { "browInnerUp" }));
         //AU2
         faceAnimationParameters.Add(2, new AnimationParameter(2, new List<string> { "browOuterUpLeft", "browOuterUpRight" }));
-        faceAnimationParameters_Back.Add(2, new AnimationParameter(2, new List<string> { "browOuterUpLeft", "browOuterUpRight" }));
         //AU4
         faceAnimationParameters.Add(4, new AnimationParameter(4, new List<string> { "browDownLeft", "browDownRight" }));
-        faceAnimationParameters_Back.Add(4, new AnimationParameter(4, new List<string> { "browDownLeft", "browDownRight" }));
         //AU5
         faceAnimationParameters.Add(5, new AnimationParameter(5, new List<string> { "eyeWideLeft", "eyeWideRight" }));
-        faceAnimationParameters_Back.Add(5, new AnimationParameter(5, new List<string> { "eyeWideLeft", "eyeWideRight" }));
         //AU6
         faceAnimationParameters.Add(6, new AnimationParameter(6, new List<string> { "cheekSquintLeft", "cheekSquintRight" }));
-        faceAnimationParameters_Back.Add(6, new AnimationParameter(6, new List<string> { "cheekSquintLeft", "cheekSquintRight" }));
         //AU7
         faceAnimationParameters.Add(7, new AnimationParameter(7, new List<string> { "eyeSquintLeft", "eyeSquintRight" }));
-        faceAnimationParameters_Back.Add(7, new AnimationParameter(7, new List<string> { "eyeSquintLeft", "eyeSquintRight" }));
         //AU9
         faceAnimationParameters.Add(9, new AnimationParameter(9, new List<string> { "noseSneerLeft", "noseSneerRight" }));
-        faceAnimationParameters_Back.Add(9, new AnimationParameter(9, new List<string> { "noseSneerLeft", "noseSneerRight" }));
         //AU10
         faceAnimationParameters.Add(10, new AnimationParameter(10, new List<string> { "mouthUpperUpLeft", "mouthUpperUpRight" }));
-        faceAnimationParameters_Back.Add(10, new AnimationParameter(10, new List<string> { "mouthUpperUpLeft", "mouthUpperUpRight" }));
         //AU12
         faceAnimationParameters.Add(12, new AnimationParameter(12, new List<string> { "mouthSmileLeft", "mouthSmileRight" }));
-        faceAnimationParameters_Back.Add(12, new AnimationParameter(12, new List<string> { "mouthSmileLeft", "mouthSmileRight" }));
         //AU14
         faceAnimationParameters.Add(14, new AnimationParameter(14, new List<string> { "mouthDimpleLeft", "mouthDimpleRight" }));
-        faceAnimationParameters_Back.Add(14, new AnimationParameter(14, new List<string> { "mouthDimpleLeft", "mouthDimpleRight" }));
         //AU15
         faceAnimationParameters.Add(15, new AnimationParameter(15, new List<string> { "mouthFrownLeft", "mouthFrownRight" }));
-        faceAnimationParameters_Back.Add(15, new AnimationParameter(15, new List<string> { "mouthFrownLeft", "mouthFrownRight" }));
         //AU16
         faceAnimationParameters.Add(16, new AnimationParameter(16, new List<string> { "mouthLowerDownLeft", "mouthLowerDownRight" }));
-        faceAnimationParameters_Back.Add(16, new AnimationParameter(16, new List<string> { "mouthLowerDownLeft", "mouthLowerDownRight" }));
         //AU17
         faceAnimationParameters.Add(17, new AnimationParameter(17, new List<string> { "mouthShrugLower" }));
-        faceAnimationParameters_Back.Add(17, new AnimationParameter(17, new List<string> { "mouthShrugLower" }));
         //AU18
         faceAnimationParameters.Add(18, new AnimationParameter(18, new List<string> { "mouthPucker" }));
-        faceAnimationParameters_Back.Add(18, new AnimationParameter(18, new List<string> { "mouthPucker" }));
         //AU20
         faceAnimationParameters.Add(20, new AnimationParameter(20, new List<string> { "mouthStretchLeft", "mouthStretchRight" }));
-        faceAnimationParameters_Back.Add(20, new AnimationParameter(20, new List<string> { "mouthStretchLeft", "mouthStretchRight" }));
         //AU22
         faceAnimationParameters.Add(22, new AnimationParameter(22, new List<string> { "mouthFunnel" }));
-        faceAnimationParameters_Back.Add(22, new AnimationParameter(22, new List<string> { "mouthFunnel" }));
         //AU24
         faceAnimationParameters.Add(24, new AnimationParameter(24, new List<string> { "mouthPressLeft", "mouthPressRight" }));
-        faceAnimationParameters_Back.Add(24, new AnimationParameter(24, new List<string> { "mouthPressLeft", "mouthPressRight" }));
         //AU26
         faceAnimationParameters.Add(26, new AnimationParameter(26, new List<string> { "jawOpen" }));
-        faceAnimationParameters_Back.Add(26, new AnimationParameter(26, new List<string> { "jawOpen" }));
         //AU27
         faceAnimationParameters.Add(27, new AnimationParameter(27, new List<string> { "jawOpen" }));
-        faceAnimationParameters_Back.Add(27, new AnimationParameter(27, new List<string> { "jawOpen" }));
         //AU28
         faceAnimationParameters.Add(28, new AnimationParameter(28, new List<string> { "mouthRollLower", "mouthRollUpper" }));
-        faceAnimationParameters_Back.Add(28, new AnimationParameter(28, new List<string> { "mouthRollLower", "mouthRollUpper" }));
         //AD29
         faceAnimationParameters.Add(29, new AnimationParameter(29, new List<string> { "jawForward" }));
-        faceAnimationParameters_Back.Add(29, new AnimationParameter(29, new List<string> { "jawForward" }));
         //AD30 but right should be here as well
         faceAnimationParameters.Add(30, new AnimationParameter(30, new List<string> { "jawLeft" }));
-        faceAnimationParameters_Back.Add(30, new AnimationParameter(30, new List<string> { "jawLeft" }));
         //AD34
         faceAnimationParameters.Add(34, new AnimationParameter(34, new List<string> { "cheekPuff" }));
-        faceAnimationParameters_Back.Add(34, new AnimationParameter(34, new List<string> { "cheekPuff" }));
         //AU45
         faceAnimationParameters.Add(45, new AnimationParameter(45, new List<string> { "eyeBlink" }));
-        faceAnimationParameters_Back.Add(45, new AnimationParameter(45, new List<string> { "eyeBlink" }));
         //M63
         faceAnimationParameters.Add(63, new AnimationParameter(63, new List<string> { "eyeLookUpLeft", "eyeLookUpRight" }));
-        faceAnimationParameters_Back.Add(63, new AnimationParameter(63, new List<string> { "eyeLookUpLeft", "eyeLookUpRight" }));
         //M64
         faceAnimationParameters.Add(64, new AnimationParameter(64, new List<string> { "eyeLookDownLeft", "eyeLookDownRight" }));
-        faceAnimationParameters_Back.Add(64, new AnimationParameter(64, new List<string> { "eyeLookDownLeft", "eyeLookDownRight" }));
         //AU65
         faceAnimationParameters.Add(65, new AnimationParameter(65, new List<string> { "eyeLookOutLeft", "eyeLookOutRight" }));
-        faceAnimationParameters_Back.Add(65, new AnimationParameter(65, new List<string> { "eyeLookOutLeft", "eyeLookOutRight" }));
         //AU66
         faceAnimationParameters.Add(66, new AnimationParameter(66, new List<string> { "eyeLookInLeft", "eyeLookInRight" }));
-        faceAnimationParameters_Back.Add(66, new AnimationParameter(66, new List<string> { "eyeLookInLeft", "eyeLookInRight" }));
-
+        
         //VISEME
         visemeAnimationParameters = new Dictionary<string, int>();
         visemeAnimationParameters_Back = new Dictionary<string, int>();
@@ -210,10 +182,10 @@ public class FacialExpressionAvaturn : MonoBehaviour
                 setVisemeNeutral();
                 if (now - referenceFaceTime > facialExpressionDuration)
                 {
-                    UpdateFaceBackWeight();
+                    //UpdateFaceBackWeight();
 
                     setFaceNeutral();
-                    referenceFaceTime = Time.time;
+                    //referenceFaceTime = Time.time;
 
                 }
             }
@@ -264,14 +236,15 @@ public class FacialExpressionAvaturn : MonoBehaviour
         }
     }
 
-    public void UpdateFaceBackWeight()
+    /*public void UpdateFaceBackWeight()
     {
         List<int> values = Enumerable.ToList(faceAnimationParameters.Keys);
         foreach (int v in values)
         {
             faceAnimationParameters_Back[v].Value = faceAnimationParameters[v].Value;
         }
-    }
+    }*/
+
     /*!
        * @brief A function for getting blendshape index by name.
        * @return int
@@ -350,7 +323,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
                 {
                     int i = getBlendShapeIndex(SkinnedMeshRendererTarget, name);
                     if(i>=0)
-                    SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(faceAnimationParameters_Back[t.Key].Value, faceAnimationParameters[t.Key].Value, lerp));
+                    SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(0, faceAnimationParameters[t.Key].Value, animationCurve.Evaluate(lerp)));
 
                 }
             }

@@ -36,8 +36,12 @@ public class KeyListenerAvaturn : MonoBehaviour
 
         if (Input.GetKeyDown("s"))
         {
-            //joue la phrase avec OpenMary
             dialogManager.PlayAudio("Bonjour, ça va");
+        }
+
+        if (Input.GetKeyDown("f"))
+        {
+            dialogManager.DisplayAUs(new int[] { 6,12},new int []{ 99,99},8f);
         }
     }
 }
