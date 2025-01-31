@@ -216,13 +216,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
         referenceFaceTime = Time.time;
         for (int i = 0; i < aus.Length; i++)
         {
-            //-joie : AUs 6 et 12
-            //-tristesse : AUs 1, 4 et 15
-            //-peur : AUs 1, 2, 4, 5, 7, 20 et 26
-            //-colère : AUs 4, 5, 7 et 23
-            //Les AUs n'étant pas directement disponible dans le modèle 3D de Unity, nous les convertissons vers les BlendShapes équivalentes
             faceAnimationParameters[aus[i]].Value = intensities[i];
-
         }
 
     }
@@ -235,15 +229,6 @@ public class FacialExpressionAvaturn : MonoBehaviour
             visemeAnimationParameters_Back[v] = visemeAnimationParameters[v];
         }
     }
-
-    /*public void UpdateFaceBackWeight()
-    {
-        List<int> values = Enumerable.ToList(faceAnimationParameters.Keys);
-        foreach (int v in values)
-        {
-            faceAnimationParameters_Back[v].Value = faceAnimationParameters[v].Value;
-        }
-    }*/
 
     /*!
        * @brief A function for getting blendshape index by name.
@@ -364,4 +349,5 @@ public class FacialExpressionAvaturn : MonoBehaviour
         }
     }
 
+   
 }

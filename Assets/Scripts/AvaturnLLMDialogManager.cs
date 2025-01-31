@@ -410,5 +410,14 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         faceExpression.setFacialAUs(aus, intensities, duration);
     }
 
-    
+    /*
+    * Exemple de fonction déclenchant une expression émotionnelle
+    * intensity_factor devrait être entre 0 et 1
+    */
+    public void Doubt(float intensity_factor, float duration)
+    {
+        DisplayAUs(new int[] { 6, 4 ,14}, new int[] { (int)(intensity_factor*100), (int)(intensity_factor * 80), (int)(intensity_factor * 80)}, duration);
+    }
+
+
 }

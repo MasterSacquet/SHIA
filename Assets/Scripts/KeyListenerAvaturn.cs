@@ -41,7 +41,7 @@ public class KeyListenerAvaturn : MonoBehaviour
 
         if (Input.GetKeyDown("f"))
         {
-            dialogManager.DisplayAUs(new int[] { 6,12},new int []{ 99,99},8f);
+            dialogManager.Doubt(1.0f,8f);
         }
     }
 }
