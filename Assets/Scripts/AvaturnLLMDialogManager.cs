@@ -299,7 +299,11 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     {
         if (!useMaryTTS)
         {
+#if UNITY_STANDALONE_WIN
             Narrator.speak(text);
+#else
+            Debug.Log("Narrator not available");
+#endif
         }
         else
         {
