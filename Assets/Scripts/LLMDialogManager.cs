@@ -40,7 +40,7 @@ public class LLMDialogManager : MonoBehaviour
     private DictationRecognizer dictationRecognizer;
 
     //whisper
-    private bool useWhisper = false;
+    public bool useWhisper = true;
     
     public WhisperManager whisper;
     public MicrophoneRecord microphoneRecord;

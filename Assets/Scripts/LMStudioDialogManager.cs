@@ -38,7 +38,7 @@ public class LMStudioDialogManager : MonoBehaviour
     private DictationRecognizer dictationRecognizer;
 
     //whisper
-    private bool useWhisper = false;
+    public bool useWhisper = true;
     public WhisperManager whisper;
     public MicrophoneRecord microphoneRecord;
     public bool streamSegments = true;

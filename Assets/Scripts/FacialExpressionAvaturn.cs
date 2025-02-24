@@ -166,6 +166,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
         float lipLerp = (now - referenceLipTime) / timeBetweenViseme;
         if (skinnedMeshRenderers != null && skinnedMeshRenderers.Count > 0)
         {
+#if UNITY_STANDALONE_WIN
             if (audioSource.isPlaying || Narrator.isSpeaking())
             {
                 if (now - referenceLipTime > timeBetweenViseme)
@@ -177,6 +178,19 @@ public class FacialExpressionAvaturn : MonoBehaviour
                 }
 
             }
+#else
+            if (audioSource.isPlaying)
+            {
+                if (now - referenceLipTime > timeBetweenViseme)
+                {
+                    UpdateLipBackWeight();
+                    choice = UnityEngine.Random.Range(0, 11);
+                    referenceLipTime = Time.time;
+                    setRandomViseme(choice);
+                }
+
+            }
+#endif
             else
             {
                 setVisemeNeutral();

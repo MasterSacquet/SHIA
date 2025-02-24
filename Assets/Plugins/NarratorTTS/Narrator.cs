@@ -95,7 +95,6 @@ namespace ACTA
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 Narrator.speak("Is there any problem in there?", false);
-                //Narrator.speak("거기 문제 있나요?", false);
             }
             //
             Narrator.speak("Hello", true);
