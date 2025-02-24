@@ -168,18 +168,9 @@ public class FacialExpressionAvaturn : MonoBehaviour
         {
 #if UNITY_STANDALONE_WIN
             if (audioSource.isPlaying || Narrator.isSpeaking())
-            {
-                if (now - referenceLipTime > timeBetweenViseme)
-                {
-                    UpdateLipBackWeight();
-                    choice = UnityEngine.Random.Range(0, 11);
-                    referenceLipTime = Time.time;
-                    setRandomViseme(choice);
-                }
-
-            }
 #else
             if (audioSource.isPlaying)
+#endif
             {
                 if (now - referenceLipTime > timeBetweenViseme)
                 {
@@ -190,7 +181,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
                 }
 
             }
-#endif
+
             else
             {
                 setVisemeNeutral();
