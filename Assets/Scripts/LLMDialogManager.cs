@@ -156,11 +156,11 @@ public class LLMDialogManager : MonoBehaviour
         }
     }
 
-    private async void OnRecordStop(float[] data, int frequency, int channels, float length)
+    private async void OnRecordStop(AudioChunk recordedAudio)
     {
         _buffer = "";
 
-        var res = await whisper.GetTextAsync(data, frequency, channels);
+        var res = await whisper.GetTextAsync(recordedAudio.Data, recordedAudio.Frequency, recordedAudio.Channels);
         if (res == null)
             return;
 
