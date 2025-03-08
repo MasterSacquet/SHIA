@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Windows;
@@ -41,7 +40,7 @@ public class LLMDialogManager : MonoBehaviour
 
     //whisper
     public bool useWhisper = true;
-    
+
     public WhisperManager whisper;
     public MicrophoneRecord microphoneRecord;
     public bool streamSegments = true;
@@ -54,7 +53,7 @@ public class LLMDialogManager : MonoBehaviour
     //LLM
     public string urlOllama;
     public string modelName;
-    [TextArea(15,20)]
+    [TextArea(15, 20)]
     public string preprompt;
     private string _response;
 
@@ -73,7 +72,7 @@ public class LLMDialogManager : MonoBehaviour
         textp.text = "";
         button = (GameObject)Instantiate(ButtonPrefab);
         button.GetComponentInChildren<Text>().text = "Dictation";
-        
+
         button.GetComponent<Button>().onClick.AddListener(delegate { OnButtonPressed(); });
 
         button.GetComponent<RectTransform>().position = new Vector3(0 * 170.0f + 90.0f, 39.0f, 0.0f);
@@ -88,12 +87,12 @@ public class LLMDialogManager : MonoBehaviour
         dictationRecognizer.DictationResult += DictationRecognizer_DictationResult;
         dictationRecognizer.DictationError += DictationRecognizer_DictationError;
         dictationRecognizer.DictationComplete += DictationRecognizer_DictationComplete;
-        
+
 
         //whisper
         whisper.OnNewSegment += OnNewSegment;
         microphoneRecord.OnRecordStop += OnRecordStop;
-        
+
     }
 
     private void DictationRecognizer_DictationComplete(DictationCompletionCause cause)
@@ -113,12 +112,12 @@ public class LLMDialogManager : MonoBehaviour
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
         textp.text = text;
         conversationList.Enqueue(text);
-        if(conversationList.Count>10)
+        if (conversationList.Count > 10)
             conversationList.Dequeue();
         string fullconv = "";
-        foreach(String s in conversationList)
+        foreach (String s in conversationList)
         {
-            fullconv += " " +s;
+            fullconv += " " + s;
         }
         SendToChat(fullconv);
     }
@@ -156,11 +155,11 @@ public class LLMDialogManager : MonoBehaviour
         }
     }
 
-    private async void OnRecordStop(float[] data, int frequency, int channels, float length)
+    private async void OnRecordStop(AudioChunk audioChunk)
     {
         _buffer = "";
 
-        var res = await whisper.GetTextAsync(data, frequency, channels);
+        var res = await whisper.GetTextAsync(audioChunk.Data, audioChunk.Frequency, audioChunk.Channels);
         if (res == null)
             return;
 
@@ -180,9 +179,9 @@ public class LLMDialogManager : MonoBehaviour
         SendToChat(fullconv);
     }
 
-    
 
-    
+
+
 
     private void OnNewSegment(WhisperSegment segment)
     {
@@ -229,7 +228,7 @@ public class LLMDialogManager : MonoBehaviour
             Debug.Log(pos);
             int endpos = _response.Substring(pos + 11).IndexOf("\"");
             Debug.Log(endpos);
-            _response = _response.Substring(pos+11, endpos);
+            _response = _response.Substring(pos + 11, endpos);
             InformationDisplay(_response);
             _response = ProcessAffectiveContent(_response);
             conversationList.Enqueue(_response);
@@ -249,7 +248,7 @@ public class LLMDialogManager : MonoBehaviour
         }
         if (response.Contains("{SAD}"))
         {
-            DisplayAUs(new int[] { 1,4, 15 }, new int[] { 60, 60,30 }, 5f);
+            DisplayAUs(new int[] { 1, 4, 15 }, new int[] { 60, 60, 30 }, 5f);
             anim.SetTrigger("SAD");
             return response.Remove(response.IndexOf("{SAD}"), 4);
         }
@@ -261,10 +260,10 @@ public class LLMDialogManager : MonoBehaviour
         if (string.IsNullOrEmpty(prompt))
             return;
         //StartCoroutine(postRequest(urlOllama+ "api/chat", "{\"model\": \""+ modelName + "\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
-        StartCoroutine(postRequest(urlOllama+ "api/generate", "{\"model\": \""+ modelName + "\",\"system\": \""+preprompt+"\",\"prompt\": \""+prompt+"\",\"stream\": false}"));        
+        StartCoroutine(postRequest(urlOllama + "api/generate", "{\"model\": \"" + modelName + "\",\"system\": \"" + preprompt + "\",\"prompt\": \"" + prompt + "\",\"stream\": false}"));
     }
 
-   
+
     /*
      * Cette méthode permet de jouer un fichier audio depuis le répertoire Resources/Sounds dont le nom est de la forme <entier>.mp3 
      */
@@ -394,11 +393,11 @@ public class LLMDialogManager : MonoBehaviour
 
     public void EndDialog()
     {
-        
+
         anim.SetTrigger("Greet");
     }
 
-    
+
     /*
      * Cette méthode permet de faire jouer des AUs à l'agent
      */
@@ -407,5 +406,5 @@ public class LLMDialogManager : MonoBehaviour
         faceExpression.setFacialAUs(aus, intensities, duration);
     }
 
-    
+
 }

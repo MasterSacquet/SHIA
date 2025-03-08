@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using static System.Math;
 using UnityEngine;
+using static System.Math;
 
 public class TargetControl : MonoBehaviour
 {
@@ -25,7 +23,7 @@ public class TargetControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector3(agent.transform.position.x, agent.transform.position.y+1.4f, agent.transform.position.z - 10f);
+        transform.position = new Vector3(agent.transform.position.x, agent.transform.position.y + 1.4f, agent.transform.position.z - 10f);
         actualThetaX = 0f;
         thetaTargetX = 0f;
         actualThetaY = 0f;
@@ -39,17 +37,17 @@ public class TargetControl : MonoBehaviour
         //Control with arrow keys
         if (Input.GetKeyDown(KeyCode.RightArrow)) //To 45� (+30�)
         {
-            turnToObjective((float) PI/6f, 0f);
-        } 
-        
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) //To -45� (-30�)
-        {
-            turnToObjective((float) -PI/6f, 0f);
+            turnToObjective((float)PI / 6f, 0f);
         }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow)) 
+        if (Input.GetKeyDown(KeyCode.LeftArrow)) //To -45� (-30�)
         {
-            turnToObjective(0f, (float) -PI/8f);
+            turnToObjective((float)-PI / 6f, 0f);
+        }
+
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            turnToObjective(0f, (float)-PI / 8f);
         }
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -57,7 +55,7 @@ public class TargetControl : MonoBehaviour
             turnToObjective(0f, 0f);
         }
 
-        
+
         moveHead();
     }
 
@@ -68,8 +66,8 @@ public class TargetControl : MonoBehaviour
     public void turnToObjective(float new_thetaTargetX, float new_thetaTargetY)
     {
         lookAtTarget = false;
-        thetaTargetX = ((float) PI * new_thetaTargetX ) / 180f;
-        thetaTargetY = ((float) PI * new_thetaTargetY ) / 180f;
+        thetaTargetX = ((float)PI * new_thetaTargetX) / 180f;
+        thetaTargetY = ((float)PI * new_thetaTargetY) / 180f;
         originalThetaX = actualThetaX;
         originalThetaY = actualThetaY;
     }
@@ -128,11 +126,11 @@ public class TargetControl : MonoBehaviour
             }
 
             lookAtTarget = lookAtTargetX && lookAtTargetY;
-            transform.position = new Vector3((float) (10*Sin(actualThetaX)), (float) (10*Sin(actualThetaY)) + 1.4f, (float) (-10*Cos(actualThetaX)));
+            transform.position = new Vector3((float)(10 * Sin(actualThetaX)), (float)(10 * Sin(actualThetaY)) + 1.4f, (float)(-10 * Cos(actualThetaX)));
         }
-        
+
     }
 
 
-   
+
 }

@@ -50,7 +50,7 @@ public class LMStudioDialogManager : MonoBehaviour
 
     //LLM
     public string urlLMStudio = "localhost";
-    public int portLMStudio =1234;
+    public int portLMStudio = 1234;
     [TextArea(15, 20)]
     public string preprompt;
     private string _response;
@@ -69,7 +69,7 @@ public class LMStudioDialogManager : MonoBehaviour
         textp.text = "";
         button = (GameObject)Instantiate(ButtonPrefab);
         button.GetComponentInChildren<Text>().text = "Record";
-        
+
         button.GetComponent<Button>().onClick.AddListener(delegate { OnButtonPressed(); });
         button.GetComponent<RectTransform>().position = new Vector3(0 * 170.0f + 90.0f, 39.0f, 0.0f);
         button.transform.SetParent(buttonPanel);
@@ -89,7 +89,7 @@ public class LMStudioDialogManager : MonoBehaviour
         microphoneRecord.OnRecordStop += OnRecordStop;
         //LLM
         //manager.OnResponseUpdated += OnResponseHandler;
-        
+
     }
 
     //whisper
@@ -154,12 +154,12 @@ public class LMStudioDialogManager : MonoBehaviour
         }
     }
 
-    private async void OnRecordStop(float[] data, int frequency, int channels, float length)
+    private async void OnRecordStop(AudioChunk audioChunk)
     {
         button.GetComponentInChildren<Text>().text = "Record";
         _buffer = "";
 
-        var res = await whisper.GetTextAsync(data, frequency, channels);
+        var res = await whisper.GetTextAsync(audioChunk.Data, audioChunk.Frequency, audioChunk.Channels);
         if (res == null)
             return;
 
@@ -184,9 +184,9 @@ public class LMStudioDialogManager : MonoBehaviour
         SendToChat(fullconv);
     }
 
-    
 
-    
+
+
 
     private void OnNewSegment(WhisperSegment segment)
     {
@@ -233,7 +233,7 @@ public class LMStudioDialogManager : MonoBehaviour
             Debug.Log(pos);
             int endpos = _response.Substring(pos + 11).IndexOf("\"");
             Debug.Log(endpos);
-            _response = _response.Substring(pos+11, endpos);
+            _response = _response.Substring(pos + 11, endpos);
             _response = _response.Split("###")[0];
             InformationDisplay(_response);
             _response = ProcessAffectiveContent(_response);
@@ -259,10 +259,10 @@ public class LMStudioDialogManager : MonoBehaviour
     {
         if (string.IsNullOrEmpty(prompt))
             return;
-        StartCoroutine(postRequest("http://"+urlLMStudio+":"+portLMStudio+"/v1/chat/completions", "{ \r\n  \"messages\": [ \r\n    { \"role\": \"system\", \"content\": \""+preprompt+"\" },\r\n    { \"role\": \"user\", \"content\": \""+prompt+"\" }\r\n  ], \r\n  \"temperature\": "+temperature+", \r\n  \"max_tokens\": -1,\r\n  \"stream\": false\r\n}"));        
+        StartCoroutine(postRequest("http://" + urlLMStudio + ":" + portLMStudio + "/v1/chat/completions", "{ \r\n  \"messages\": [ \r\n    { \"role\": \"system\", \"content\": \"" + preprompt + "\" },\r\n    { \"role\": \"user\", \"content\": \"" + prompt + "\" }\r\n  ], \r\n  \"temperature\": " + temperature + ", \r\n  \"max_tokens\": -1,\r\n  \"stream\": false\r\n}"));
     }
 
-   
+
     /*
      * Cette mthode permet de jouer un fichier audio depuis le rpertoire Resources/Sounds dont le nom est de la forme <entier>.mp3 
      */
@@ -392,11 +392,11 @@ public class LMStudioDialogManager : MonoBehaviour
 
     public void EndDialog()
     {
-        
+
         anim.SetTrigger("Greet");
     }
 
-    
+
     /*
      * Cette mthode permet de faire jouer des AUs  l'agent
      */
@@ -404,5 +404,5 @@ public class LMStudioDialogManager : MonoBehaviour
     {
         faceExpression.setFacialAUs(aus, intensities, duration);
     }
-    
+
 }

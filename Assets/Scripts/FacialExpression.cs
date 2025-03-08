@@ -1,6 +1,4 @@
 ﻿using ACTA;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 /*
  * Ce script gère les expressions faciales et l'animation des lèvres de l'agent.
@@ -10,7 +8,7 @@ public class FacialExpression : MonoBehaviour
 {
 
     public AudioSource audioSource;
-    public SkinnedMeshRenderer SkinnedMeshRendererTarget = null; 
+    public SkinnedMeshRenderer SkinnedMeshRendererTarget = null;
 
 
     private float referenceLipTime;

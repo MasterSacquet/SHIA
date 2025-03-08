@@ -2868,7 +2868,6 @@ GameObject:
   - component: {fileID: 4710148808015195431}
   - component: {fileID: 7332171295667993632}
   - component: {fileID: 3228158708978071423}
-  - component: {fileID: 2762673670550936773}
   m_Layer: 0
   m_Name: MikeAlgerFull
   m_TagString: Untagged
@@ -3095,13 +3094,16 @@ MonoBehaviour:
   ButtonPrefab: {fileID: 3881083886603802510, guid: 1ea7a58cf14e24f43b8e938fe4b07137,
     type: 3}
   faceExpression: {fileID: 4710148808477011922}
+  useWhisper: 1
   whisper: {fileID: 3228158708978071423}
-  microphoneRecord: {fileID: 2762673670550936773}
+  microphoneRecord: {fileID: 0}
   streamSegments: 1
   printLanguage: 0
   urlOllama: 
   modelName: Elvis:latest
   preprompt: 
+  useMaryTTS: 0
+  maryTTSPort: 59125
   marylanguage: en-US
   mary_voice: cmu-rms
 --- !u!114 &3228158708978071423
@@ -3136,34 +3138,6 @@ MonoBehaviour:
   tokensTimestamps: 0
   speedUp: 0
   audioCtx: 0
---- !u!114 &2762673670550936773
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3637820483213913963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxLengthSec: 30
-  frequency: 16000
-  chunksLengthSec: 0.5
-  echo: 0
-  useVad: 1
-  vadUpdateRateSec: 0.1
-  vadContextSec: 30
-  vadLastSec: 1.25
-  vadThd: 0.6
-  vadFreqThd: 100
-  vadIndicatorImage: {fileID: 0}
-  vadStop: 0
-  dropVadPart: 1
-  vadStopTime: 3
-  microphoneDropdown: {fileID: 0}
-  microphoneDefaultLabel: Default microphone
 --- !u!1 &3665513712255120951
 GameObject:
   m_ObjectHideFlags: 0

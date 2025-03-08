@@ -1,6 +1,5 @@
 ﻿
 using ACTA;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -44,7 +43,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
     private float facialExpressionDuration = 2.0f;
     private int[] aus = { 0 };
 
-    public AnimationCurve animationCurve = AnimationCurve.EaseInOut(0.0f,0.0f,1.0f,1.0f);
+    public AnimationCurve animationCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 1.0f, 1.0f);
 
     /*Pour chaque paramètre du visage, on va conserver la valeur cible, vers laquelle on souhaite que le muscle du visage aille,
     * et la valeur précédente (dans le paramètre Back) afin de pouvoir interpoler ensuite entre ces deux valeurs pour animer en douceur le visage
@@ -117,7 +116,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
         faceAnimationParameters.Add(65, new AnimationParameter(65, new List<string> { "eyeLookOutLeft", "eyeLookOutRight" }));
         //AU66
         faceAnimationParameters.Add(66, new AnimationParameter(66, new List<string> { "eyeLookInLeft", "eyeLookInRight" }));
-        
+
         //VISEME
         visemeAnimationParameters = new Dictionary<string, int>();
         visemeAnimationParameters_Back = new Dictionary<string, int>();
@@ -312,8 +311,8 @@ public class FacialExpressionAvaturn : MonoBehaviour
                 foreach (string name in t.Value.Names)
                 {
                     int i = getBlendShapeIndex(SkinnedMeshRendererTarget, name);
-                    if(i>=0)
-                    SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(0, faceAnimationParameters[t.Key].Value, animationCurve.Evaluate(lerp)));
+                    if (i >= 0)
+                        SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(0, faceAnimationParameters[t.Key].Value, animationCurve.Evaluate(lerp)));
 
                 }
             }
@@ -325,7 +324,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
         foreach (SkinnedMeshRenderer SkinnedMeshRendererTarget in skinnedMeshRenderers)
         {
             Mesh m = SkinnedMeshRendererTarget.sharedMesh;
-            
+
             int i = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeBlinkLeft");
             int j = getBlendShapeIndex(SkinnedMeshRendererTarget, "eyeBlinkRight");
             if (i >= 0 && j >= 0)
@@ -354,5 +353,5 @@ public class FacialExpressionAvaturn : MonoBehaviour
         }
     }
 
-   
+
 }

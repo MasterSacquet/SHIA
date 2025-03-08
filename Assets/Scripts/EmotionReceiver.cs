@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -50,13 +48,13 @@ public class EmotionReceiver : MonoBehaviour
                 return;
             }
             byte[] data = new byte[byteLength];
-            Array.Copy(receivebuffer, data,byteLength);
+            Array.Copy(receivebuffer, data, byteLength);
             //Pour l'instant on affiche l'émotion reçue dans la console de Unity.
             //On pourrait faire plus :)
-            Debug.Log("Data reçu : "+ System.Text.Encoding.Default.GetString(receivebuffer));
+            Debug.Log("Data reçu : " + System.Text.Encoding.Default.GetString(receivebuffer));
             stream.BeginRead(receivebuffer, 0, 4096, ReceiveCallBack, null);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Debug.Log("Erreur serveur : " + ex.ToString());
         }
@@ -66,6 +64,6 @@ public class EmotionReceiver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

@@ -93,10 +93,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5542582519226612422}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
-        type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5812595150489882072}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
         type: 3}
@@ -122,6 +118,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 140854072258029511}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6c8dacdcc2e82a244b63df259f891b2d,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 869725520736348391}
   m_SourcePrefab: {fileID: 100100000, guid: 6c8dacdcc2e82a244b63df259f891b2d, type: 3}
 --- !u!137 &1312620349554041272 stripped
 SkinnedMeshRenderer:
@@ -285,34 +285,6 @@ MonoBehaviour:
   spine: {fileID: 5595862593120815123}
   target: {fileID: 0}
   speed: 1
---- !u!114 &5542582519226612422
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5754686051043950182}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxLengthSec: 30
-  frequency: 16000
-  chunksLengthSec: 0.5
-  echo: 0
-  useVad: 1
-  vadUpdateRateSec: 0.1
-  vadContextSec: 30
-  vadLastSec: 1.25
-  vadThd: 0.6
-  vadFreqThd: 100
-  vadIndicatorImage: {fileID: 0}
-  vadStop: 0
-  dropVadPart: 1
-  vadStopTime: 3
-  microphoneDropdown: {fileID: 0}
-  microphoneDefaultLabel: Default microphone
 --- !u!114 &5812595150489882072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -427,8 +399,9 @@ MonoBehaviour:
   ButtonPrefab: {fileID: 3881083886603802510, guid: 1ea7a58cf14e24f43b8e938fe4b07137,
     type: 3}
   faceExpression: {fileID: 2688234431666394140}
+  useWhisper: 1
   whisper: {fileID: 5812595150489882072}
-  microphoneRecord: {fileID: 5542582519226612422}
+  microphoneRecord: {fileID: 869725520736348391}
   streamSegments: 1
   printLanguage: 0
   numberOfTurn: 2
@@ -503,6 +476,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1330598191339617958}
   dialogManager: {fileID: 6001228673146745531}
+--- !u!114 &869725520736348391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5754686051043950182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxLengthSec: 60
+  loop: 0
+  frequency: 16000
+  chunksLengthSec: 0.5
+  echo: 0
+  useVad: 1
+  vadUpdateRateSec: 0.1
+  vadContextSec: 30
+  vadLastSec: 1.25
+  vadThd: 1
+  vadFreqThd: 100
+  vadIndicatorImage: {fileID: 0}
+  vadStop: 0
+  dropVadPart: 1
+  vadStopTime: 3
+  microphoneDropdown: {fileID: 0}
+  microphoneDefaultLabel: Default microphone
 --- !u!137 &7243220833717832370 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2853240716290050437, guid: 6c8dacdcc2e82a244b63df259f891b2d,

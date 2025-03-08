@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 /*
@@ -17,13 +15,13 @@ public class CameraCapture : MonoBehaviour
         if (Input.GetKeyDown(screenshotKey))
         {
             int i = getBlendShapeIndex(SkinnedMeshRendererTarget, "BrowsDown_Left");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i,100 - (10*fileCounter));
+            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 100 - (10 * fileCounter));
             i = getBlendShapeIndex(SkinnedMeshRendererTarget, "BrowsDown_Right");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 100 - (10 * fileCounter)); 
+            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 100 - (10 * fileCounter));
             i = getBlendShapeIndex(SkinnedMeshRendererTarget, "BrowsIn_Left");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 100 - (10 * fileCounter)); 
+            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 100 - (10 * fileCounter));
             i = getBlendShapeIndex(SkinnedMeshRendererTarget, "BrowsIn_Left");
-            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 100 - (10 * fileCounter)); 
+            SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 100 - (10 * fileCounter));
             i = getBlendShapeIndex(SkinnedMeshRendererTarget, "Smile_Left");
             SkinnedMeshRendererTarget.SetBlendShapeWeight(i, 10 * fileCounter);
             i = getBlendShapeIndex(SkinnedMeshRendererTarget, "Smile_Right");

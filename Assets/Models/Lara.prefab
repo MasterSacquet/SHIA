@@ -63,6 +63,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lara
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
         type: 3}
       propertyPath: m_Controller
@@ -81,10 +86,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6132987327935441820}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3978171389712430266}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
         type: 3}
       insertIndex: -1
@@ -117,6 +118,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 5006744893018922364}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d6c704f4c2d03b44bf371f1a90998f7,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1643272584904227378}
   m_SourcePrefab: {fileID: 100100000, guid: 2d6c704f4c2d03b44bf371f1a90998f7, type: 3}
 --- !u!4 &533962150897437094 stripped
 Transform:
@@ -256,34 +261,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &3978171389712430266
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4497471555607062800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxLengthSec: 30
-  frequency: 16000
-  chunksLengthSec: 0.5
-  echo: 0
-  useVad: 1
-  vadUpdateRateSec: 0.1
-  vadContextSec: 30
-  vadLastSec: 1.25
-  vadThd: 0.6
-  vadFreqThd: 100
-  vadIndicatorImage: {fileID: 0}
-  vadStop: 0
-  dropVadPart: 1
-  vadStopTime: 3
-  microphoneDropdown: {fileID: 0}
-  microphoneDefaultLabel: Default microphone
 --- !u!114 &4271549096328786916
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,8 +313,9 @@ MonoBehaviour:
   ButtonPrefab: {fileID: 3881083886603802510, guid: 1ea7a58cf14e24f43b8e938fe4b07137,
     type: 3}
   faceExpression: {fileID: 5218800838974715953}
+  useWhisper: 1
   whisper: {fileID: 4271549096328786916}
-  microphoneRecord: {fileID: 3978171389712430266}
+  microphoneRecord: {fileID: 1643272584904227378}
   streamSegments: 1
   printLanguage: 0
   numberOfTurn: 4
@@ -491,6 +469,35 @@ MonoBehaviour:
   - {fileID: 1527824237145529796}
   url: ws://localhost
   port: 8080
+--- !u!114 &1643272584904227378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4497471555607062800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxLengthSec: 60
+  loop: 0
+  frequency: 16000
+  chunksLengthSec: 0.5
+  echo: 0
+  useVad: 1
+  vadUpdateRateSec: 0.1
+  vadContextSec: 30
+  vadLastSec: 1.25
+  vadThd: 1
+  vadFreqThd: 100
+  vadIndicatorImage: {fileID: 0}
+  vadStop: 0
+  dropVadPart: 1
+  vadStopTime: 3
+  microphoneDropdown: {fileID: 0}
+  microphoneDefaultLabel: Default microphone
 --- !u!4 &5113265726210725357 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8385327893941879212, guid: 2d6c704f4c2d03b44bf371f1a90998f7,

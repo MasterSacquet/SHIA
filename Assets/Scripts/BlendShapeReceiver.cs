@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 using WebSocketSharp;
 using WebSocketSharp.Server;
-using UnityEngine;
-using System.Collections.Generic;
 /*
 * Ce script permet de recevoir sur une WebSocket des blendshapes au format de Google Mediapipe.
 */
@@ -15,13 +15,13 @@ public class BlendShapeReceiver : MonoBehaviour
     private Dictionary<string, int> blenshapesValues = new Dictionary<string, int>();
     private WebSocketServer wss;
 
-    
+
     void Start()
     {
-        
+
         mainBSR = this;
         // Crée un serveur WebSocket sur le port 8080
-        wss = new WebSocketServer(url+":"+port);
+        wss = new WebSocketServer(url + ":" + port);
 
         // Ajoute un comportement de réception
         wss.AddWebSocketService<Handler>("/");
@@ -78,19 +78,19 @@ public class BlendShapeReceiver : MonoBehaviour
 
     }
 
-        public class Handler : WebSocketBehavior
+    public class Handler : WebSocketBehavior
     {
         protected override void OnMessage(MessageEventArgs e)
         {
             try
             {
                 // Reçoit le message JSON
-                
+
                 BlendShapeInfoCollection bsic = BlendShapeInfoCollection.CreateFromJSON(e.Data);
                 foreach (Category bsi in bsic.categories)
                 {
                     lock (BlendShapeReceiver.mainBSR.blenshapesValues)
-                    { 
+                    {
                         if (BlendShapeReceiver.mainBSR.blenshapesValues.ContainsKey(bsi.categoryName))
                         {
                             BlendShapeReceiver.mainBSR.blenshapesValues[bsi.categoryName] = (int)(bsi.score * 100);
@@ -102,7 +102,7 @@ public class BlendShapeReceiver : MonoBehaviour
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.Log(ex.ToString());
             }
@@ -128,7 +128,7 @@ public class BlendShapeReceiver : MonoBehaviour
 
     void Update()
     {
-       
+
         animFace();
     }
 

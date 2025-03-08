@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.IO;
+using System.Text;
+using UnityEngine;
 
 namespace ACTA
 {
@@ -32,10 +30,10 @@ namespace ACTA
 
         [DllImport("WindowsTTS")]
         public static extern void changeVoice(int vIdx);
-        
+
         [DllImport("WindowsTTS")]
         public static extern bool isSpeaking();
-        
+
         public CONTEXT mode;
 
         public static Narrator theVoice = null;
@@ -82,7 +80,7 @@ namespace ACTA
         {
             changeVoice(voiceIdx);
         }
-        
+
         public void TestSpeech()
         {
             Narrator.speak("Do you hear me?", false);

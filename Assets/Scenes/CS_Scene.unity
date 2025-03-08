@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -522,51 +521,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mike
       objectReference: {fileID: 0}
-    - target: {fileID: 445348291142154115, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 823649117692796147, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_BlendShapeWeights.Array.data[15]
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 823649117692796147, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_BlendShapeWeights.Array.data[16]
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 823649117692796147, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_BlendShapeWeights.Array.data[32]
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 823649117692796147, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_BlendShapeWeights.Array.data[33]
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 823649117692796147, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_BlendShapeWeights.Array.data[46]
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 823649117692796147, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_BlendShapeWeights.Array.data[67]
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 823649117692796147, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: m_BlendShapeWeights.Array.data[68]
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919335117898982130, guid: 2d6065db2e3517b4db090ab89b5ccbff,
-        type: 3}
-      propertyPath: port
-      value: 26950
-      objectReference: {fileID: 0}
     - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -632,6 +586,11 @@ PrefabInstance:
       propertyPath: informationPanel
       value: 
       objectReference: {fileID: 1533015128}
+    - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: microphoneRecord
+      value: 
+      objectReference: {fileID: 1669707107}
     - target: {fileID: 5579421970884112016, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: target
@@ -642,6 +601,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d6065db2e3517b4db090ab89b5ccbff, type: 3}
+--- !u!114 &1160543796 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1643272584904227378, guid: becdef54031a44d41a6a236238d06ddd,
+    type: 3}
+  m_PrefabInstance: {fileID: 1192350120}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1192350120
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -710,11 +681,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lara
       objectReference: {fileID: 0}
-    - target: {fileID: 4497471555607062800, guid: becdef54031a44d41a6a236238d06ddd,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
         type: 3}
       propertyPath: textPanel
@@ -730,6 +696,11 @@ PrefabInstance:
       propertyPath: informationPanel
       value: 
       objectReference: {fileID: 1533015128}
+    - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
+        type: 3}
+      propertyPath: microphoneRecord
+      value: 
+      objectReference: {fileID: 1160543796}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -836,6 +807,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1533015125}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1669707107 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4228793459949060085, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+    type: 3}
+  m_PrefabInstance: {fileID: 1064046513}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1819316030
 GameObject:
   m_ObjectHideFlags: 0

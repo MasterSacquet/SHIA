@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 /*
  * Ce script gère la direction du regard de l'agent
  */
@@ -15,7 +13,7 @@ public class Gaze : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -57,7 +55,7 @@ public class Gaze : MonoBehaviour
             // Calculate a rotation a step closer to the target and applies rotation to this object
             rightEye.rotation = Quaternion.LookRotation(newRightDirection);
         }
-        
-        
+
+
     }
 }

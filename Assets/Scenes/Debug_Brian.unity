@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -431,85 +430,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
+    - target: {fileID: 869725520736348391, guid: 0803849357987d8439edeae3b5953572,
         type: 3}
-      propertyPath: animationCurve.m_Curve.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[1].time
-      value: 0.24333954
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[2].time
-      value: 0.8034302
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[3].time
-      value: 0.9867951
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[1].value
-      value: 0.97926486
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[2].value
-      value: 0.9830305
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[3].value
-      value: 0.008237183
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[1].inSlope
-      value: 0.11309672
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[2].inSlope
-      value: -0.1072192
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[1].inWeight
-      value: 0.61644816
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[1].outSlope
-      value: 0.11309672
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[2].inWeight
-      value: 0.28581917
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[2].outSlope
-      value: -0.5787092
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[2].outWeight
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[2].tangentMode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2688234431666394140, guid: 0803849357987d8439edeae3b5953572,
-        type: 3}
-      propertyPath: animationCurve.m_Curve.Array.data[3].tangentMode
-      value: 1
+      propertyPath: echo
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3126031049390678681, guid: 0803849357987d8439edeae3b5953572,
         type: 3}
@@ -586,11 +510,28 @@ PrefabInstance:
       propertyPath: informationPanel
       value: 
       objectReference: {fileID: 2002690073}
+    - target: {fileID: 6001228673146745531, guid: 0803849357987d8439edeae3b5953572,
+        type: 3}
+      propertyPath: microphoneRecord
+      value: 
+      objectReference: {fileID: 1016183053}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0803849357987d8439edeae3b5953572, type: 3}
+--- !u!114 &1016183053 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 869725520736348391, guid: 0803849357987d8439edeae3b5953572,
+    type: 3}
+  m_PrefabInstance: {fileID: 1016183052}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bc03a4c19604ea394e364f8fc632928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1060150611
 GameObject:
   m_ObjectHideFlags: 0
