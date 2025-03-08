@@ -154,12 +154,12 @@ public class LMStudioDialogManager : MonoBehaviour
         }
     }
 
-    private async void OnRecordStop(AudioChunk recordedAudio)
+    private async void OnRecordStop(float[] data, int frequency, int channels, float length)
     {
         button.GetComponentInChildren<Text>().text = "Record";
         _buffer = "";
 
-        var res = await whisper.GetTextAsync(recordedAudio.Data, recordedAudio.Frequency, recordedAudio.Channels);
+        var res = await whisper.GetTextAsync(data, frequency, channels);
         if (res == null)
             return;
 
