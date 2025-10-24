@@ -1,7 +1,7 @@
 using ACTA;
+using Assets.Scripts.Utils;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -49,11 +49,13 @@ public class AvaturnLLMDialogManager : MonoBehaviour
 
     //conversation memory
     public int numberOfTurn = 10;
-    private Queue<String> conversationList;
+    private JsonParser jsonParser = new JsonParser();
+    private JsonValue conversationList = new JsonValue(JsonType.Array);
 
     //LLM
     public string urlOllama;
     public string modelName;
+    public string APIkey;
     [TextArea(15, 20)]
     public string preprompt;
     private string _response;
@@ -79,8 +81,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         button.GetComponent<RectTransform>().position = new Vector3(0 * 170.0f + 90.0f, 39.0f, 0.0f);
         button.transform.SetParent(buttonPanel);
 
-        conversationList = new Queue<String>();
-
+        
         //dictation
         dictationRecognizer = new DictationRecognizer();
         dictationRecognizer.AutoSilenceTimeoutSeconds = 10;
@@ -112,15 +113,18 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     {
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
         textp.text = text;
-        conversationList.Enqueue("USER:" + text);
-        if (conversationList.Count > numberOfTurn)
-            conversationList.Dequeue();
-        string fullconv = "";
-        foreach (String s in conversationList)
-        {
-            fullconv += " " + s;
-        }
-        SendToChat(fullconv);
+        JsonValue userTurn = new JsonValue(JsonType.Object);
+        JsonValue userRole = new JsonValue(JsonType.String);
+        userRole.StringValue = "user";
+        JsonValue userContent = new JsonValue(JsonType.String);
+        userContent.StringValue = text;
+        userTurn.ObjectValues.Add("role", userRole);
+        userTurn.ObjectValues.Add("content", userContent);
+        conversationList.ArrayValues.Add(userTurn);
+        if (conversationList.ArrayValues.Count > numberOfTurn)
+            conversationList.ArrayValues.RemoveAt(0);
+        
+        SendToChat(conversationList);
     }
 
     //whisper
@@ -169,15 +173,18 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             text += $"\n\nLanguage: {res.Language}";
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
         textp.text = text;
-        conversationList.Enqueue("USER:" + text);
-        if (conversationList.Count > numberOfTurn)
-            conversationList.Dequeue();
-        string fullconv = "";
-        foreach (String s in conversationList)
-        {
-            fullconv += " " + s;
-        }
-        SendToChat(fullconv);
+        JsonValue userTurn = new JsonValue(JsonType.Object);
+        JsonValue userRole = new JsonValue(JsonType.String);
+        userRole.StringValue = "user";
+        JsonValue userContent = new JsonValue(JsonType.String);
+        userContent.StringValue = text;
+        userTurn.ObjectValues.Add("role", userRole);
+        userTurn.ObjectValues.Add("content", userContent);
+        conversationList.ArrayValues.Add(userTurn);
+        if (conversationList.ArrayValues.Count > numberOfTurn)
+            conversationList.ArrayValues.RemoveAt(0);
+
+        SendToChat(conversationList);
     }
 
 
@@ -217,6 +224,9 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         uwr.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
         uwr.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         uwr.SetRequestHeader("Content-Type", "application/json");
+        uwr.SetRequestHeader("Authorization", "Bearer "+APIkey);
+
+
 
         //Send the request then wait here until it returns
         yield return uwr.SendWebRequest();
@@ -230,17 +240,21 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             Debug.Log("Received: " + uwr.downloadHandler.text);
             _response = uwr.downloadHandler.text;
             //retrieve response from the JSON
-            int pos = _response.IndexOf("response\":");
-            Debug.Log(pos);
-            int endpos = _response.Substring(pos + 11).IndexOf("\"");
-            Debug.Log(endpos);
-            _response = _response.Substring(pos + 11, endpos);
-            _response = RemoveWhitespacesCustom(_response);
-            InformationDisplay(_response);
-            _response = ProcessAffectiveContent(_response);
-            conversationList.Enqueue("ASSISTANT:" + _response);
-            if (conversationList.Count > numberOfTurn)
-                conversationList.Dequeue();
+            JsonValue response = jsonParser.Parse(_response);
+            String responseString = response.ObjectValues["choices"].ArrayValues[0].ObjectValues["message"].ObjectValues["content"].StringValue;
+            InformationDisplay(responseString);
+            _response = ProcessAffectiveContent(responseString);
+
+            JsonValue assistantTurn = new JsonValue(JsonType.Object);
+            JsonValue assistantRole = new JsonValue(JsonType.String);
+            assistantRole.StringValue = "user";
+            JsonValue assistantContent = new JsonValue(JsonType.String);
+            assistantContent.StringValue = _response;
+            assistantTurn.ObjectValues.Add("role", assistantRole);
+            assistantTurn.ObjectValues.Add("content", assistantContent);
+            conversationList.ArrayValues.Add(assistantTurn);
+            if (conversationList.ArrayValues.Count > numberOfTurn)
+                conversationList.ArrayValues.RemoveAt(0);
             PlayAudio(_response);
         }
     }
@@ -262,12 +276,16 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         return response;
     }
 
-    private void SendToChat(string prompt)
+    private void SendToChat(JsonValue conversationList)
     {
-        if (string.IsNullOrEmpty(prompt))
+        if (conversationList.ArrayValues.Count == 0)
             return;
-        //StartCoroutine(postRequest(urlOllama+ "api/chat", "{\"model\": \""+ modelName + "\",\"messages\": [{\"role\": \"system\",\"content\": \"" + preprompt+"\"},{\"role\": \"user\",\"content\": \"" + prompt+"\"}],\"stream\": false}"));        
-        StartCoroutine(postRequest(urlOllama + "api/generate", "{\"model\": \"" + modelName + "\",\"system\": \"" + RemoveWhitespacesCustom(preprompt) + "\",\"prompt\": \"You provide the next ASSISTANT response in this conversation :" + prompt + "\",\"stream\": false}"));
+        JsonValue data = new JsonValue(JsonType.Object);
+        JsonValue modelNameValue = new JsonValue(JsonType.String);
+        modelNameValue.StringValue = modelName;
+        data.ObjectValues.Add("model", modelNameValue);
+        data.ObjectValues.Add("messages", conversationList);
+        StartCoroutine(postRequest(urlOllama + "api/chat/completions", data.ToJsonString()));
     }
 
 
