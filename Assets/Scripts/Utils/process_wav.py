@@ -90,4 +90,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
             result = process_wav_bytes(data)
 
-            conn.sendall(json.dumps(result).encode("utf-8"))
+            conn.sendall(json.dumps(result,ensure_ascii=False).encode("utf-8"))
