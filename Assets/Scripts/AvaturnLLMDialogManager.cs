@@ -3,10 +3,10 @@ using Assets.Scripts.Utils;
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Windows;
 using UnityEngine.Windows.Speech;
 using Whisper;
 using Whisper.Utils;
@@ -60,11 +60,12 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     public string preprompt;
     private string _response;
 
-    //openMary
-    public bool useMaryTTS = false;
-    public int maryTTSPort = 59125;
-    public string marylanguage = "en";
-    public string mary_voice = "cmu-rms";
+    //piper
+    public bool usePiper = true;
+    public int piperPort = 5000;
+    public float speakerID = 1;
+
+    public bool usePhonemeGenerator = false;
 
     // Start is called before the first frame update
     void Start()
@@ -81,7 +82,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         button.GetComponent<RectTransform>().position = new Vector3(0 * 170.0f + 90.0f, 39.0f, 0.0f);
         button.transform.SetParent(buttonPanel);
 
-        
+
         //dictation
         dictationRecognizer = new DictationRecognizer();
         dictationRecognizer.AutoSilenceTimeoutSeconds = 10;
@@ -123,7 +124,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         conversationList.ArrayValues.Add(userTurn);
         if (conversationList.ArrayValues.Count > numberOfTurn)
             conversationList.ArrayValues.RemoveAt(0);
-        
+
         SendToChat(conversationList);
     }
 
@@ -212,10 +213,6 @@ public class AvaturnLLMDialogManager : MonoBehaviour
      * LLM
      */
 
-    private string RemoveWhitespacesCustom(string source)
-    {
-        return Regex.Replace(source, @"\s", " ").Replace("\n", " ").Replace("\\", "");
-    }
 
     IEnumerator postRequest(string url, string json)
     {
@@ -224,7 +221,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         uwr.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
         uwr.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         uwr.SetRequestHeader("Content-Type", "application/json");
-        uwr.SetRequestHeader("Authorization", "Bearer "+APIkey);
+        uwr.SetRequestHeader("Authorization", "Bearer " + APIkey);
 
 
 
@@ -306,15 +303,39 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         }
     }
 
+
+    IEnumerator postTTSRequest(string text)
+    {
+        text = Regex.Replace(text, "[\"\']", "");
+        var uwr = new UnityWebRequest("http://localhost:5000", "POST");
+        byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes("{ \"text\": \"" + text + "\" , \"speaker_id\": " + speakerID.ToString()+"}");
+        uwr.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
+        uwr.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        uwr.SetRequestHeader("Content-Type", "application/json");
+
+        //Send the request then wait here until it returns
+        yield return uwr.SendWebRequest();
+        byte[] wavData = uwr.downloadHandler.data;
+        if (usePhonemeGenerator)
+        {
+            string json = Wav2VecClient.SendWav(wavData);
+            Debug.Log("Python returned: " + json);
+        }
+        
+        AudioClip clip = WavUtility.ToAudioClip(wavData, "DownloadedClip");
+        audioSource.clip = clip;
+        audioSource.Play();
+    }
+
+
     /*
-     * Cette méthode permet de demander à MaryTTS de générer un audio, puis de le jouer, à partir du texte
-     * MaryTTS server doit donc être lancé sur la machine.
-     * Pour l'instant, il est attendu que le répertoire marytts-5.2 soit copié dans le répertoire StreamingAssets du projet 
-     * et que MaryTTS-Server soit exécuté à partir de /marytts-5.2/bin/ 
+     * Cette méthode permet de demander à piperTTS de générer un audio, puis de le jouer, à partir du texte
+     * piperTTS server doit donc être lancé sur la machine.
      */
     public void PlayAudio(string text)
     {
-        if (!useMaryTTS)
+
+        if (!usePiper)
         {
 #if UNITY_STANDALONE_WIN
             Narrator.speak(text);
@@ -324,74 +345,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         }
         else
         {
-            // need to change player setting to allow non-https connections
-            string maryTTS_request = "http://localhost:59125/process?INPUT_TEXT=" + text.Replace(" ", "+") + "&INPUT_TYPE=TEXT&OUTPUT_TYPE=AUDIO&AUDIO=WAVE_FILE&LOCALE=" + marylanguage + "&VOICE=" + mary_voice;
-            Debug.Log("request: " + maryTTS_request);
-
-            StartCoroutine(SetAudioClipFromFile(maryTTS_request));
-        }
-    }
-
-    IEnumerator SetAudioClipFromFile(string path)
-    {
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, AudioType.WAV))
-        {
-            yield return www.SendWebRequest();
-            if (www.result == UnityWebRequest.Result.ConnectionError)
-            {
-                Debug.Log(www.error);
-                Debug.Log("Unable to use MaryTTS voice synthesiser.");
-                string MaryTTSLocation = Application.streamingAssetsPath + "/marytts-5.2/bin/marytts-server";
-                if (File.Exists(MaryTTSLocation))
-                {
-                    Debug.Log("Trying to restart MaryTTS server.");
-                    Process proc = new Process
-                    {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            UseShellExecute = true,
-                            WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized, // cannot close it if set to hidden
-                            CreateNoWindow = true,
-                            FileName = MaryTTSLocation
-                        }
-                    };
-                    try
-                    {
-                        proc.Start();
-                        System.Threading.Thread.Sleep(1000);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.Log("Failed to start MaryTTS server: ");
-                        Debug.LogException(e);
-                    }
-
-                    if (proc.StartTime <= DateTime.Now && !proc.HasExited)
-                    {
-                        Debug.Log("Restarted MaryTTS server.");
-                    }
-                    else
-                    {
-                        var errorMsg = string.Format("Failed to started MaryTTS (server not running). Disabling MaryTTS.");
-
-                        if (proc.HasExited)
-                        {
-                            errorMsg = string.Format("Failed to started MaryTTS (server was closed). Disabling MaryTTS.");
-                        }
-
-                        Debug.Log(errorMsg);
-                    }
-                }
-                else
-                {
-                    Debug.Log("Failed to restart MaryTTS server. Disabling MaryTTS.");
-                }
-            }
-            else
-            {
-                AudioClip music = DownloadHandlerAudioClip.GetContent(www);
-                audioSource.PlayOneShot(music, volume);
-            }
+            StartCoroutine(postTTSRequest(text));
         }
     }
 

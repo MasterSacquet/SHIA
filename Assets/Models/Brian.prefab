@@ -182,6 +182,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -405,8 +406,9 @@ MonoBehaviour:
   streamSegments: 1
   printLanguage: 0
   numberOfTurn: 2
-  urlOllama: http://localhost:11434/
-  modelName: deepseek-r1:7b
+  urlOllama: 
+  modelName: 
+  APIkey: 
   preprompt: "Tu t'appelles Bob et tu es un guide pour les nouveaux \xE9tudiants
     de CentraleSupelec. Tu fais des r\xE9ponses courtes et tu souhaites que tout
     le monde passe un bon moment."
@@ -414,6 +416,8 @@ MonoBehaviour:
   maryTTSPort: 59125
   marylanguage: en
   mary_voice: cmu-rms
+  usePiper: 1
+  piperPort: 5000
 --- !u!114 &7474477940224653697
 MonoBehaviour:
   m_ObjectHideFlags: 0

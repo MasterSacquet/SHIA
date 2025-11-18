@@ -34,7 +34,7 @@ public class KeyListenerAvaturn : MonoBehaviour
 
         if (Input.GetKeyDown("s"))
         {
-            dialogManager.PlayAudio("Bonjour, ça va");
+            dialogManager.PlayAudio("Bonjour, j'ai hâte de travailler avec vous!");
         }
 
         if (Input.GetKeyDown("f"))

@@ -524,6 +524,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mike
       objectReference: {fileID: 0}
+    - target: {fileID: 445348291142154115, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -576,13 +581,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
+      propertyPath: speed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
       propertyPath: APIkey
-      value: sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      value: sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      objectReference: {fileID: 0}
+    - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: usePiper
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: modelName
       value: casperhansen/llama-3.3-70b-instruct-awq
+      objectReference: {fileID: 0}
+    - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: speakerID
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
@@ -592,7 +612,7 @@ PrefabInstance:
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: urlOllama
-      value: https://condescending-wozniak.mydocker-run-vd.centralesupelec.fr/
+      value: https://aaa-bbb.mydocker-run-vd.centralesupelec.fr/
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
@@ -609,6 +629,11 @@ PrefabInstance:
       propertyPath: microphoneRecord
       value: 
       objectReference: {fileID: 1669707107}
+    - target: {fileID: 3514827005268524591, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: language
+      value: fr
+      objectReference: {fileID: 0}
     - target: {fileID: 5579421970884112016, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: target
@@ -703,6 +728,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Lara
+      objectReference: {fileID: 0}
+    - target: {fileID: 4497471555607062800, guid: becdef54031a44d41a6a236238d06ddd,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7068121327761383866, guid: becdef54031a44d41a6a236238d06ddd,
         type: 3}
