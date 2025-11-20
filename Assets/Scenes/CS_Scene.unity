@@ -587,7 +587,7 @@ PrefabInstance:
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: APIkey
-      value: sk-b65050fee09e4032985bcede6c52b94e
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
@@ -597,7 +597,7 @@ PrefabInstance:
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: modelName
-      value: casperhansen/llama-3.3-70b-instruct-awq
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
@@ -612,7 +612,7 @@ PrefabInstance:
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: urlOllama
-      value: https://happy-elgamal.mydocker-run-vd.centralesupelec.fr/
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
