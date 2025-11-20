@@ -1,10 +1,12 @@
 using ACTA;
+using Assets.Scripts;
 using Assets.Scripts.Utils;
 using System;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Windows.Speech;
@@ -66,6 +68,9 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     public float speakerID = 1;
 
     public bool usePhonemeGenerator = false;
+
+    //ComputationalModel
+    private ComputationalModel computationalModel = new ComputationalModel();
 
     // Start is called before the first frame update
     void Start()
@@ -170,6 +175,8 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             return;
 
         var text = res.Result;
+        //UserAnalysis(text);
+        Debug.Log(computationalModel.getEmotion());
         if (printLanguage)
             text += $"\n\nLanguage: {res.Language}";
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
@@ -214,7 +221,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
      */
 
 
-    IEnumerator postRequest(string url, string json)
+    IEnumerator ChatRequest(string url, string json)
     {
         var uwr = new UnityWebRequest(url, "POST");
         byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(json);
@@ -222,8 +229,6 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         uwr.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
         uwr.SetRequestHeader("Content-Type", "application/json");
         uwr.SetRequestHeader("Authorization", "Bearer " + APIkey);
-
-
 
         //Send the request then wait here until it returns
         yield return uwr.SendWebRequest();
@@ -240,11 +245,13 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             JsonValue response = jsonParser.Parse(_response);
             String responseString = response.ObjectValues["choices"].ArrayValues[0].ObjectValues["message"].ObjectValues["content"].StringValue;
             InformationDisplay(responseString);
-            _response = ProcessAffectiveContent(responseString);
+            //_response = ProcessAffectiveContent(responseString);
+            _response = responseString;
+            //LLMAnalysis(_response);
 
             JsonValue assistantTurn = new JsonValue(JsonType.Object);
             JsonValue assistantRole = new JsonValue(JsonType.String);
-            assistantRole.StringValue = "user";
+            assistantRole.StringValue = "assistant";
             JsonValue assistantContent = new JsonValue(JsonType.String);
             assistantContent.StringValue = _response;
             assistantTurn.ObjectValues.Add("role", assistantRole);
@@ -252,11 +259,66 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             conversationList.ArrayValues.Add(assistantTurn);
             if (conversationList.ArrayValues.Count > numberOfTurn)
                 conversationList.ArrayValues.RemoveAt(0);
+            
             PlayAudio(_response);
         }
     }
 
-    private string ProcessAffectiveContent(string response)
+    IEnumerator UserRequest(string url, string json)
+    {
+        var uwr = new UnityWebRequest(url, "POST");
+        byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(json);
+        uwr.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
+        uwr.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        uwr.SetRequestHeader("Content-Type", "application/json");
+        uwr.SetRequestHeader("Authorization", "Bearer " + APIkey);
+
+        //Send the request then wait here until it returns
+        yield return uwr.SendWebRequest();
+
+        if (uwr.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Error While Sending: " + uwr.error);
+        }
+        else
+        {
+            Debug.Log("Received: " + uwr.downloadHandler.text);
+            _response = uwr.downloadHandler.text;
+            //retrieve response from the JSON
+            JsonValue response = jsonParser.Parse(_response);
+            computationalModel.UserValues(response.StringValue);
+        }
+    }
+
+    IEnumerator LLMRequest(string url, string json)
+    {
+        var uwr = new UnityWebRequest(url, "POST");
+        byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes(json);
+        uwr.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
+        uwr.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
+        uwr.SetRequestHeader("Content-Type", "application/json");
+        uwr.SetRequestHeader("Authorization", "Bearer " + APIkey);
+
+        //Send the request then wait here until it returns
+        yield return uwr.SendWebRequest();
+
+        if (uwr.result != UnityWebRequest.Result.Success)
+        {
+            Debug.Log("Error While Sending: " + uwr.error);
+        }
+        else
+        {
+            Debug.Log("Received: " + uwr.downloadHandler.text);
+            _response = uwr.downloadHandler.text;
+            //retrieve response from the JSON
+            JsonValue response = jsonParser.Parse(_response);
+            computationalModel.LLMValues(response.StringValue);
+        }
+    }
+
+
+
+    /*private string ProcessAffectiveContent(string response)
     {
         if (response.Contains("{JOY}"))
         {
@@ -273,16 +335,84 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         return response;
     }
 
+    */
+
     private void SendToChat(JsonValue conversationList)
     {
         if (conversationList.ArrayValues.Count == 0)
             return;
+        JsonValue fullConv = new JsonValue(JsonType.Array);
+        JsonValue systemTurn = new JsonValue(JsonType.Object);
+        JsonValue systemRole = new JsonValue(JsonType.String);
+        systemRole.StringValue = "system";
+        JsonValue systemContent = new JsonValue(JsonType.String);
+        systemContent.StringValue = Regex.Replace(Regex.Replace(preprompt, "[\"\']", ""), "\\s", " ");
+        //systemContent.StringValue = "Tu t'appelles John et tu réponds avec un niveau de patience qui va de 1, très patient, à 5, très impatient. Le niveau de patience actuelle est égale à :" +computationalModel.getEmotion();
+        systemTurn.ObjectValues.Add("role", systemRole);
+        systemTurn.ObjectValues.Add("content", systemContent);
+        fullConv.ArrayValues.Add(systemTurn);
+        fullConv.ArrayValues.AddRange(conversationList.ArrayValues);
         JsonValue data = new JsonValue(JsonType.Object);
         JsonValue modelNameValue = new JsonValue(JsonType.String);
         modelNameValue.StringValue = modelName;
         data.ObjectValues.Add("model", modelNameValue);
-        data.ObjectValues.Add("messages", conversationList);
-        StartCoroutine(postRequest(urlOllama + "api/chat/completions", data.ToJsonString()));
+        data.ObjectValues.Add("messages", fullConv);
+        StartCoroutine(ChatRequest(urlOllama + "api/chat/completions", data.ToJsonString()));
+    }
+
+    private void UserAnalysis(String content)
+    {
+
+        JsonValue fullConv = new JsonValue(JsonType.Array);
+        JsonValue systemTurn = new JsonValue(JsonType.Object);
+        JsonValue systemRole = new JsonValue(JsonType.String);
+        systemRole.StringValue = "system";
+        JsonValue systemContent = new JsonValue(JsonType.String);
+        systemContent.StringValue = "Tu es un système d'analyse des émotions. Quand je te parle tu réponds une valeur entière entre 0 et 100 d'intensité émotionnelle que tu détectes dans ma phrase";
+        systemTurn.ObjectValues.Add("role", systemRole);
+        systemTurn.ObjectValues.Add("content", systemContent);
+        fullConv.ArrayValues.Add(systemTurn);
+        JsonValue userTurn = new JsonValue(JsonType.Object);
+        JsonValue userRole = new JsonValue(JsonType.String);
+        userRole.StringValue = "user";
+        JsonValue userContent = new JsonValue(JsonType.String);
+        userContent.StringValue = content;
+        userTurn.ObjectValues.Add("role",userRole);
+        userTurn.ObjectValues.Add("content",userContent);
+        fullConv.ArrayValues.Add(userTurn);
+        JsonValue data = new JsonValue(JsonType.Object);
+        JsonValue modelNameValue = new JsonValue(JsonType.String);
+        modelNameValue.StringValue = modelName;
+        data.ObjectValues.Add("model", modelNameValue);
+        data.ObjectValues.Add("messages", fullConv);
+        StartCoroutine(UserRequest(urlOllama + "api/chat/completions", data.ToJsonString()));
+    }
+
+    private void LLMAnalysis(String content)
+    {
+        JsonValue fullConv = new JsonValue(JsonType.Array);
+        JsonValue systemTurn = new JsonValue(JsonType.Object);
+        JsonValue systemRole = new JsonValue(JsonType.String);
+        systemRole.StringValue = "system";
+        JsonValue systemContent = new JsonValue(JsonType.String);
+        systemContent.StringValue = "Tu es un système d'analyse des émotions. Quand je te parle tu réponds une valeur entière entre 0 et 100 d'intensité émotionnelle que tu détectes dans ma phrase";
+        systemTurn.ObjectValues.Add("role", systemRole);
+        systemTurn.ObjectValues.Add("content", systemContent);
+        fullConv.ArrayValues.Add(systemTurn);
+        JsonValue userTurn = new JsonValue(JsonType.Object);
+        JsonValue userRole = new JsonValue(JsonType.String);
+        userRole.StringValue = "user";
+        JsonValue userContent = new JsonValue(JsonType.String);
+        userContent.StringValue = content;
+        userTurn.ObjectValues.Add("role", userRole);
+        userTurn.ObjectValues.Add("content", userContent);
+        fullConv.ArrayValues.Add(userTurn);
+        JsonValue data = new JsonValue(JsonType.Object);
+        JsonValue modelNameValue = new JsonValue(JsonType.String);
+        modelNameValue.StringValue = modelName;
+        data.ObjectValues.Add("model", modelNameValue);
+        data.ObjectValues.Add("messages", fullConv);
+        StartCoroutine(LLMRequest(urlOllama + "api/chat/completions", data.ToJsonString()));
     }
 
 
@@ -306,7 +436,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
 
     IEnumerator postTTSRequest(string text)
     {
-        text = Regex.Replace(text, "[\"\']", "");
+        text = Regex.Replace(Regex.Replace(text, "[\"\']", ""), "\\s"," ");
         var uwr = new UnityWebRequest("http://localhost:5000", "POST");
         byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes("{ \"text\": \"" + text + "\" , \"speaker_id\": " + speakerID.ToString()+"}");
         uwr.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);

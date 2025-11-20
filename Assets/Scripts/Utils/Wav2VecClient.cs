@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
-using UnityEngine;
 namespace Assets.Scripts.Utils
 {
     public class Wav2VecClient
