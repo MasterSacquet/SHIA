@@ -3,10 +3,7 @@ using Assets.Scripts;
 using Assets.Scripts.Utils;
 using System;
 using System.Collections;
-using System.Diagnostics;
-using System.IO;
 using System.Text.RegularExpressions;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Windows.Speech;
@@ -21,7 +18,6 @@ using Text = UnityEngine.UI.Text;
 * ATTENTION : pour faire fonctionner le plugin Whisper de Macoron, il faut ajouter les modèles dans le répertoire 
 * StreamingAssets. Allez voir les pages dédiées de ces modules pour plus d'explications. Ils ne sont pas fournis par défaut car ils prennent
 * trop de place.
-* Pour le fonctionnement de MaryTTS, le serveur MaryTTS doit s'exécuter depuis le répertoire StreamingAssets et n'est pas fourni également
 */
 public class AvaturnLLMDialogManager : MonoBehaviour
 {
@@ -175,8 +171,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             return;
 
         var text = res.Result;
-        //UserAnalysis(text);
-        Debug.Log(computationalModel.getEmotion());
+        UserAnalysis(text);
         if (printLanguage)
             text += $"\n\nLanguage: {res.Language}";
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
@@ -247,7 +242,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             InformationDisplay(responseString);
             //_response = ProcessAffectiveContent(responseString);
             _response = responseString;
-            //LLMAnalysis(_response);
+            LLMAnalysis(_response);
 
             JsonValue assistantTurn = new JsonValue(JsonType.Object);
             JsonValue assistantRole = new JsonValue(JsonType.String);
@@ -368,7 +363,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         JsonValue systemRole = new JsonValue(JsonType.String);
         systemRole.StringValue = "system";
         JsonValue systemContent = new JsonValue(JsonType.String);
-        systemContent.StringValue = "Tu es un système d'analyse des émotions. Quand je te parle tu réponds une valeur entière entre 0 et 100 d'intensité émotionnelle que tu détectes dans ma phrase";
+        systemContent.StringValue = "Tu es un système d'analyse des émotions. Quand je te parle tu réponds une valeur entière entre 0 et 100 d'intensité émotionnelle que tu détectes dans ma phrase. Tu ne dis rien d'autre que la valeur. Tu ne dis pas un mot, juste la valeur numérique, comme une machine.";
         systemTurn.ObjectValues.Add("role", systemRole);
         systemTurn.ObjectValues.Add("content", systemContent);
         fullConv.ArrayValues.Add(systemTurn);
@@ -395,7 +390,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         JsonValue systemRole = new JsonValue(JsonType.String);
         systemRole.StringValue = "system";
         JsonValue systemContent = new JsonValue(JsonType.String);
-        systemContent.StringValue = "Tu es un système d'analyse des émotions. Quand je te parle tu réponds une valeur entière entre 0 et 100 d'intensité émotionnelle que tu détectes dans ma phrase";
+        systemContent.StringValue = "Tu es un système d'analyse des émotions. Quand je te parle tu réponds une valeur entière entre 0 et 100 d'intensité émotionnelle que tu détectes dans ma phrase. Tu ne dis rien d'autre que la valeur. Tu ne dis pas un mot, juste la valeur numérique, comme une machine.";
         systemTurn.ObjectValues.Add("role", systemRole);
         systemTurn.ObjectValues.Add("content", systemContent);
         fullConv.ArrayValues.Add(systemTurn);
