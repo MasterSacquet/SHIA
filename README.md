@@ -16,8 +16,8 @@ Previous versions (available on the repository) used Mike Alger's 3D model but a
 
 You can clone the current project using your favorite Git Client or you can download it as a zip archive and extract it on your drive.
 
-Mike the PA should work on Linux, Windows and MacOS versions of Unity3D starting from version 2022.3.15f1.
-On Windows, it uses by default the Windows Text-To-Speech and Speech-To-Text. On MacOS and Linux, you have to use Macoron's Whisper plugin and OpenMary TTS (these can be used on Windows as well).
+Mike the PA should work on Linux, Windows and MacOS versions of Unity3D starting from version 6000.0.60f1.
+On Windows, it uses by default the Windows Text-To-Speech and Speech-To-Text. On MacOS and Linux, you have to use Macoron's Whisper plugin and Piper-TTS (these can be used on Windows as well).
 
 As a Unity3D project, you need to add the project in your project's list using UnityHub "Add Project" functionality.
 
