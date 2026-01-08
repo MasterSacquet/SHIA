@@ -13,6 +13,14 @@ using Application = UnityEngine.Application;
 using Button = UnityEngine.UI.Button;
 using Debug = UnityEngine.Debug;
 using Text = UnityEngine.UI.Text;
+
+public enum EndPoint
+{
+        OpenWebUI,
+        Ollama
+};
+
+
 /*
 * La classe LLMDialogManager permet de centraliser les fonctionnalités liés à l'aspect conversationnel de l'agent en Full Audio en utilisant un LLM hébergé sur un serveur distant. 
 * ATTENTION : pour faire fonctionner le plugin Whisper de Macoron, il faut ajouter les modèles dans le répertoire 
@@ -51,7 +59,9 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     private JsonValue conversationList = new JsonValue(JsonType.Array);
 
     //LLM
+
     public string urlOllama;
+    public EndPoint endPoint = EndPoint.OpenWebUI; // api/chat/completions
     public string modelName;
     public string APIkey;
     [TextArea(15, 20)]
@@ -238,7 +248,15 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             _response = uwr.downloadHandler.text;
             //retrieve response from the JSON
             JsonValue response = jsonParser.Parse(_response);
-            String responseString = response.ObjectValues["choices"].ArrayValues[0].ObjectValues["message"].ObjectValues["content"].StringValue;
+            String responseString = "";
+            if (endPoint == EndPoint.OpenWebUI)
+            {
+                responseString = response.ObjectValues["choices"].ArrayValues[0].ObjectValues["message"].ObjectValues["content"].StringValue;
+            }
+            else if (endPoint == EndPoint.Ollama)
+            {
+                responseString = response.ObjectValues["message"].ObjectValues["content"].StringValue;
+            }
             InformationDisplay(responseString);
             //_response = ProcessAffectiveContent(responseString);
             _response = responseString;
@@ -352,7 +370,19 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         modelNameValue.StringValue = modelName;
         data.ObjectValues.Add("model", modelNameValue);
         data.ObjectValues.Add("messages", fullConv);
-        StartCoroutine(ChatRequest(urlOllama + "api/chat/completions", data.ToJsonString()));
+        JsonValue streamValue = new JsonValue(JsonType.Boolean);
+        streamValue.BoolValue = false;
+        data.ObjectValues.Add("stream", streamValue);
+        string endPointS = "";
+        if (endPoint == EndPoint.OpenWebUI)
+        {
+            endPointS = "api/chat/completions";
+        }
+        if (endPoint == EndPoint.Ollama)
+        {
+            endPointS = "api/chat";
+        }
+        StartCoroutine(ChatRequest(urlOllama + endPointS, data.ToJsonString()));
     }
 
     private void UserAnalysis(String content)
@@ -380,7 +410,19 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         modelNameValue.StringValue = modelName;
         data.ObjectValues.Add("model", modelNameValue);
         data.ObjectValues.Add("messages", fullConv);
-        StartCoroutine(UserRequest(urlOllama + "api/chat/completions", data.ToJsonString()));
+        JsonValue streamValue = new JsonValue(JsonType.Boolean);
+        streamValue.BoolValue = false;
+        data.ObjectValues.Add("stream", streamValue);
+        string endPointS = "";
+        if (endPoint == EndPoint.OpenWebUI)
+        {
+            endPointS = "api/chat/completions";
+        }
+        if (endPoint == EndPoint.Ollama)
+        {
+            endPointS = "api/chat";
+        }
+        StartCoroutine(UserRequest(urlOllama + endPointS, data.ToJsonString()));
     }
 
     private void LLMAnalysis(String content)
@@ -407,7 +449,19 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         modelNameValue.StringValue = modelName;
         data.ObjectValues.Add("model", modelNameValue);
         data.ObjectValues.Add("messages", fullConv);
-        StartCoroutine(LLMRequest(urlOllama + "api/chat/completions", data.ToJsonString()));
+        JsonValue streamValue = new JsonValue(JsonType.Boolean);
+        streamValue.BoolValue = false;
+        data.ObjectValues.Add("stream", streamValue);
+        string endPointS = "";
+        if (endPoint == EndPoint.OpenWebUI)
+        {
+            endPointS = "api/chat/completions";
+        }
+        if (endPoint == EndPoint.Ollama)
+        {
+            endPointS = "api/chat";
+        }
+        StartCoroutine(LLMRequest(urlOllama + endPointS, data.ToJsonString()));
     }
 
 
