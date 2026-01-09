@@ -486,7 +486,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     IEnumerator postTTSRequest(string text)
     {
         text = Regex.Replace(Regex.Replace(text, "[\"\']", ""), "\\s"," ");
-        var uwr = new UnityWebRequest("http://localhost:5000", "POST");
+        var uwr = new UnityWebRequest("http://localhost:"+ piperPort.ToString(), "POST");
         byte[] jsonToSend = new System.Text.UTF8Encoding().GetBytes("{ \"text\": \"" + text + "\" , \"speaker_id\": " + speakerID.ToString()+"}");
         uwr.uploadHandler = (UploadHandler)new UploadHandlerRaw(jsonToSend);
         uwr.downloadHandler = (DownloadHandler)new DownloadHandlerBuffer();
