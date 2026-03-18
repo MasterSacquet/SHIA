@@ -13,6 +13,7 @@ using Application = UnityEngine.Application;
 using Button = UnityEngine.UI.Button;
 using Debug = UnityEngine.Debug;
 using Text = UnityEngine.UI.Text;
+using System.Collections.Generic;
 
 public enum EndPoint
 {
@@ -355,86 +356,205 @@ public class AvaturnLLMDialogManager : MonoBehaviour
 
 
 
+
+    [Header("Emotion Settings")]
+
+    [Range(0.5f, 2f)]
+    public float speechSpeed = 2.5f;
+
+    [Range(0.5f, 2f)]
+    public float emotionOverlap = 0.85f;
+
+    [Range(0.1f, 2f)]
+    public float globalEmotionIntensity = 1.0f;
+
+    [Range(0.1f, 1f)]
+    public float attackRatio = 0.25f;
+
+    [Range(0.1f, 1f)]
+    public float decayExponent = 3f;
+
+    class EmotionSegment
+    {
+        public string emotion;
+        public string text;
+        public float duration;
+    }
+
+
+
     private string ProcessAffectiveContent(string response)
     {
+        StopAllCoroutines(); // 🔥 évite les overlaps
+
         StartCoroutine(ProcessEmotionSequence(response));
 
-        // Supprime tous les tags émotionnels du texte pour le TTS
+        // Supprime les tags pour le TTS
         return Regex.Replace(response, "{.*?}", "").Trim();
     }
 
-
-    IEnumerator ProcessEmotionSequence(string text)
+    List<EmotionSegment> ParseEmotionSegments(string text)
     {
+        List<EmotionSegment> segments = new List<EmotionSegment>();
+
         Regex regex = new Regex(@"\{(.*?)\}");
         MatchCollection matches = regex.Matches(text);
 
-        if (matches.Count == 0)
-            yield break;
-
-        float totalDuration = EstimateSpeechDuration(text);
-        float timePerEmotion = totalDuration / matches.Count;
-
-        float startTime = Time.time;
-
         for (int i = 0; i < matches.Count; i++)
         {
+            int start = matches[i].Index + matches[i].Length;
+            int end = (i < matches.Count - 1) ? matches[i + 1].Index : text.Length;
+
             string emotion = matches[i].Groups[1].Value;
+            string segmentText = text.Substring(start, end - start).Trim();
 
-            PlayEmotion(emotion, timePerEmotion);
-
-            yield return new WaitForSeconds(timePerEmotion * 0.6f);
-
-            // 🔥 FADE OUT AVANT LA PROCHAINE EMOTION
-            faceExpression.ReturnToNeutralSmoothPartial();
+            segments.Add(new EmotionSegment
+            {
+                emotion = emotion,
+                text = segmentText
+            });
         }
 
-        yield return new WaitForSeconds(0.5f);
-
-        if (faceExpression != null)
-            faceExpression.ReturnToNeutralSmooth();
+        return segments;
     }
 
-    float EstimateSpeechDuration(string text)
+    IEnumerator ProcessEmotionSequence(string text)
     {
-        int words = text.Split(' ').Length;
-        float wordsPerSecond = 2.5f;
-        return words / wordsPerSecond;
+        var segments = ParseEmotionSegments(text);
+
+        if (segments.Count == 0)
+            yield break;
+
+        float timeline = 0f;
+
+        foreach (var seg in segments)
+        {
+            seg.duration = EstimateDuration(seg.text);
+        }
+
+        yield return new WaitForSeconds(0.05f);
+
+        foreach (var seg in segments)
+        {
+            StartCoroutine(PlayEmotionEnvelope(seg.emotion, seg.duration));
+            yield return new WaitForSeconds(seg.duration * emotionOverlap);
+            // 🔥 chevauchement volontaire (clé du naturel)
+        }
     }
 
-    private float PlayEmotion(string emotion, float duration)
+    IEnumerator PlayEmotionEnvelope(string emotion, float duration)
+    {
+        var data = GetEmotionAUs(emotion);
+
+        float attack = duration * attackRatio;
+        float decay = duration - attack;
+
+        float t = 0f;
+
+        while (t < duration)
+        {
+            float intensityFactor;
+
+            if (t < attack)
+            {
+                intensityFactor = Mathf.SmoothStep(0, 1, t / attack);
+            }
+            else
+            {
+                float d = (t - attack) / decay;
+                intensityFactor = Mathf.Exp(-decayExponent * d);
+            }
+
+            ApplyEmotionDynamic(data, intensityFactor);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    void ApplyEmotionDynamic((int[], int[]) data, float factor)
+    {
+        int[] aus = data.Item1;
+        int[] baseIntensities = data.Item2;
+
+        int[] intensities = new int[baseIntensities.Length];
+
+        for (int i = 0; i < baseIntensities.Length; i++)
+        {
+            float noise = UnityEngine.Random.Range(0.95f, 1.05f);
+
+            intensities[i] = (int)(
+                baseIntensities[i] *
+                factor *
+                noise *
+                globalEmotionIntensity
+            );
+        }
+
+        faceExpression.AccumulateExpression(aus, intensities);
+    }
+
+    float EstimateDuration(string text)
+    {
+        int words = text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Length;
+        return Mathf.Max(0.4f, words / speechSpeed);
+    }
+
+    (int[], int[]) GetEmotionAUs(string emotion)
     {
         switch (emotion)
         {
-            case "JOY":
-                DisplayAUsBlend(new int[] { 6, 12 }, new int[] { 80, 90 }, duration);
-                break;
-
-            case "SAD":
-                DisplayAUsBlend(new int[] { 1, 4, 15 }, new int[] { 60, 70, 80 }, duration);
-                break;
-
-            case "ANGER":
-                DisplayAUsBlend(new int[] { 4, 5, 7, 24 }, new int[] { 80, 70, 60, 70 }, duration);
-                break;
-
-            case "SURPRISE":
-                DisplayAUsBlend(new int[] { 1, 2, 5, 26 }, new int[] { 80, 80, 70, 60 }, duration);
-                break;
-
-            case "NEUTRAL":
-                faceExpression.ReturnToNeutralSmooth();
-                break;
+            case "JOY": return (new int[] { 6, 12 }, new int[] { 80, 90 });
+            case "SAD": return (new int[] { 1, 4, 15 }, new int[] { 60, 70, 80 });
+            case "ANGER": return (new int[] { 4, 5, 7, 24 }, new int[] { 80, 70, 60, 70 });
+            case "SURPRISE": return (new int[] { 1, 2, 5, 26 }, new int[] { 80, 80, 70, 60 });
+            case "NEUTRAL": return (new int[] { }, new int[] { });
+            default: return (new int[] { }, new int[] { });
         }
-
-        return duration;
     }
 
-    private void DisplayAUsBlend(int[] aus, int[] intensities, float duration)
+
+    void PlayEmotionSmooth(string emotion, float duration)
     {
-        if (faceExpression != null)
+        var data = GetEmotionAUs(emotion);
+
+        // 🔥 petite variation naturelle
+        int[] intensities = new int[data.Item2.Length];
+        for (int i = 0; i < data.Item2.Length; i++)
         {
-            faceExpression.BlendToExpression(aus, intensities, duration);
+            int variation = UnityEngine.Random.Range(-10, 10);
+            intensities[i] = Mathf.Clamp(data.Item2[i] + variation, 0, 100);
+        }
+
+        faceExpression.BlendToExpression(data.Item1, intensities, duration);
+    }
+
+    IEnumerator CrossFadeEmotion(string from, string to, float duration)
+    {
+        var fromData = GetEmotionAUs(from);
+        var toData = GetEmotionAUs(to);
+
+        float t = 0f;
+
+        while (t < duration)
+        {
+            float lerp = t / duration;
+
+            int length = Mathf.Max(fromData.Item2.Length, toData.Item2.Length);
+            int[] blended = new int[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                int fromVal = i < fromData.Item2.Length ? fromData.Item2[i] : 0;
+                int toVal = i < toData.Item2.Length ? toData.Item2[i] : 0;
+
+                blended[i] = (int)Mathf.Lerp(fromVal, toVal, lerp);
+            }
+
+            faceExpression.BlendToExpression(toData.Item1, blended, 0.1f);
+
+            t += Time.deltaTime;
+            yield return null;
         }
     }
 
@@ -453,7 +573,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
 
 
 
-
+    
     private void SendToChat(JsonValue conversationList)
     {
         if (conversationList.ArrayValues.Count == 0)
