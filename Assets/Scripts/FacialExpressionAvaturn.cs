@@ -53,7 +53,6 @@ public class FacialExpressionAvaturn : MonoBehaviour
     private Dictionary<int, int> targetValues = new Dictionary<int, int>();
     private float blendStartTime;
     private float blendDuration = 1f;
-    private float decaySpeed = 40f; // vitesse de retour au neutre
     private bool autoDecay = true;
 
 
@@ -250,6 +249,21 @@ public class FacialExpressionAvaturn : MonoBehaviour
 
 
 
+    [Header("Face Dynamics")]
+
+    [Range(0.1f, 3f)]
+    public float decaySpeed = 1.0f;
+
+    [Range(0.1f, 1f)]
+    public float smoothing = 0.85f;
+
+    [Range(0.1f, 2f)]
+    public float accumulationWeight = 1.0f;
+
+    [Range(0.01f, 0.5f)]
+    public float blendResponsiveness = 0.1f;
+
+
     void TriggerMicroExpression()
     {
         int choice = UnityEngine.Random.Range(0, 3);
@@ -302,17 +316,51 @@ public class FacialExpressionAvaturn : MonoBehaviour
         blendStartTime = Time.time;
         blendDuration = duration;
 
-        // 🔥 IMPORTANT : ne pas clear → on blend avec l'ancien état
-        foreach (var key in faceAnimationParameters.Keys.ToList())
-        {
-            targetValues[key] = 0; // base neutre
-        }
+        // ❌ SUPPRESSION DU RESET GLOBAL
+        // foreach (var key in faceAnimationParameters.Keys.ToList())
+        //     targetValues[key] = 0;
 
         for (int i = 0; i < aus.Length; i++)
         {
             targetValues[aus[i]] = intensities[i];
         }
     }
+
+
+    public void AccumulateExpression(int[] aus, int[] intensities)
+    {
+        foreach (var key in faceAnimationParameters.Keys.ToList())
+        {
+            if (!targetValues.ContainsKey(key))
+                targetValues[key] = 0;
+        }
+
+        for (int i = 0; i < aus.Length; i++)
+        {
+            int au = aus[i];
+            float target = intensities[i] * accumulationWeight;
+
+            if (!targetValues.ContainsKey(au))
+                targetValues[au] = 0;
+
+            // 🔥 accumulation douce (PAS additive brute)
+            targetValues[au] = (int)Mathf.Lerp(
+                targetValues[au],
+                target,
+                0.5f
+            );
+
+            targetValues[au] = Mathf.Clamp(targetValues[au], 0, 100);
+        }
+
+        blendStartTime = Time.time;
+        blendDuration = blendResponsiveness;
+    }
+
+
+
+
+
 
 
 
@@ -421,25 +469,36 @@ public class FacialExpressionAvaturn : MonoBehaviour
         {
             foreach (var param in faceAnimationParameters)
             {
-                int current = param.Value.Value;
-                int target = targetValues.ContainsKey(param.Key) ? targetValues[param.Key] : 0;
+                int au = param.Key;
 
-                int blended = (int)Mathf.Lerp(current, target, animationCurve.Evaluate(t));
+                float current = param.Value.Value;
+                float target = targetValues.ContainsKey(au) ? targetValues[au] : 0f;
 
-                // 🔥 AJOUT : relaxation naturelle
-                if (autoDecay && !targetValues.ContainsKey(param.Key))
-                {
-                    blended = (int)Mathf.Lerp(blended, 0, Time.deltaTime * decaySpeed);
-                }
+                // 🔥 decay progressif (pas brutal)
+                target = Mathf.Lerp(target, 0, Time.deltaTime * decaySpeed);
+                targetValues[au] = (int)target;
+
+                float curveT = animationCurve.Evaluate(t);
+
+                float blended = Mathf.Lerp(current, target, curveT);
+
+                // 🔥 inertie
+                blended = Mathf.Lerp(current, blended, smoothing);
+
+                // 🔥 clamp + seuil
+                if (blended < 0.5f)
+                    blended = 0;
+
+                int finalValue = Mathf.Clamp((int)blended, 0, 100);
 
                 foreach (string name in param.Value.Names)
                 {
                     int i = getBlendShapeIndex(smr, name);
                     if (i >= 0)
-                        smr.SetBlendShapeWeight(i, blended);
+                        smr.SetBlendShapeWeight(i, finalValue);
                 }
 
-                param.Value.Value = blended;
+                param.Value.Value = finalValue;
             }
         }
     }
