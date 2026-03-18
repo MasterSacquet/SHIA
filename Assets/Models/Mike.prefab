@@ -8,6 +8,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -9114889020240603615, guid: 90e70c402ce369643b69b6256d3fc5fc,
+        type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[0]'
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: -9114889020240603615, guid: 90e70c402ce369643b69b6256d3fc5fc,
+        type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[1]'
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 90e70c402ce369643b69b6256d3fc5fc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -141,6 +151,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: bb0701f817add5543a2fa328b1dbeec3, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -302,15 +313,17 @@ MonoBehaviour:
   streamSegments: 1
   printLanguage: 0
   numberOfTurn: 4
-  urlOllama: http://login:password@ip:port/
-  modelName: mistral:instruct
+  urlOllama: https://cool-bardeen.mydocker-run-vd.centralesupelec.fr/
+  endPoint: 0
+  modelName: casperhansen/llama-3.3-70b-instruct-awq
+  APIkey: sk-ae9fc64d2be345e0a639cb2fd9a9b92b
   preprompt: "Tu t'appelles Mike et tu es un guide pour les nouveaux \xE9tudiants
     de CentraleSupelec. Tu fais des r\xE9ponses courtes et tu souhaites que tout
     le monde passe un bon moment."
-  useMaryTTS: 0
-  maryTTSPort: 59125
-  marylanguage: en
-  mary_voice: cmu-rms
+  usePiper: 0
+  piperPort: 5000
+  speakerID: 1
+  usePhonemeGenerator: 0
 --- !u!114 &2935881028399906947
 MonoBehaviour:
   m_ObjectHideFlags: 0

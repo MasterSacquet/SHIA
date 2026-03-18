@@ -181,6 +181,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -202,9 +204,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &154348297
 MeshFilter:
@@ -254,14 +258,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1.26
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -529,6 +533,16 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 823649117692796147, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[0]'
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919335117898982130, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 965425385307811129, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -587,32 +601,32 @@ PrefabInstance:
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: APIkey
-      value: 
+      value: sk-ae9fc64d2be345e0a639cb2fd9a9b92b
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: endPoint
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: usePiper
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: modelName
-      value: llama3.2:latest
+      value: gpt-oss-120b
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: preprompt
-      value: "Tu t'appelles Mike et tu es un guide pour les nouveaux \xE9tudiants
-        de CentraleSupelec. Tu fais des r\xE9ponses courtes sans mentionner ton \xE9tat
-        \xE9motionnel. Tes r\xE9ponses ne contiennent que le contenu de ce que tu
-        dis. Tu as un niveau de patience avec les \xE9tudiants qui va de 0 (tr\xE8s
-        agac\xE9 et impatient) \xE0 100 (tr\xE8s patient). Ton niveau actuel est
-        de 80."
+      value: "Tu es un raconteur d'histoire. R\xE9pond exactement ce texte \xE0 chaque
+        fois que l'on te pose une question :\n\n{JOY} Bonjour ! Je suis tr\xE8s heureux
+        de te rencontrer.\n\n{SURPRISE} Mais attends... tu es d\xE9j\xE0 venu ici
+        avant ?\n\n{SAD} Je me souviens maintenant... c'\xE9tait il y a longtemps.\n\n{ANGER}
+        Pourquoi es-tu parti sans rien dire ?\n\n{NEUTRAL} Enfin... ce qui est fait
+        est fait.\n\n{JOY} Je suis content que tu sois revenu."
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
@@ -627,7 +641,7 @@ PrefabInstance:
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: urlOllama
-      value: http://127.0.0.1:11434/
+      value: https://elated-bohr.mydocker-run-vd.centralesupelec.fr/
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
@@ -654,6 +668,16 @@ PrefabInstance:
       propertyPath: usePhonemeGenerator
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2898898709790559419, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 32d0111ffe559f94ea44791d968566b8, type: 3}
+    - target: {fileID: 3276341691487978327, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: 'm_BlendShapeWeights.Array.data[0]'
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3514827005268524591, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: language
@@ -669,10 +693,30 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 963194228}
+    - target: {fileID: 6594903253502621507, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_AnimatePhysics
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6594903253502621507, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7698098854903832606, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: voiceIdx
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7698098854903832606, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8709693727731540441, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -801,6 +845,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Text
       value: "Tableau d'informations\n\nBonjour\nBienvenue dans la d\xE9mo IA & SHS"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7543891830293008977, guid: afcb50b7d4a1ede4b8a490cc50003ad7,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 2.6000366
       objectReference: {fileID: 0}
     - target: {fileID: 7543891831248579717, guid: afcb50b7d4a1ede4b8a490cc50003ad7,
         type: 3}

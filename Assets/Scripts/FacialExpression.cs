@@ -94,7 +94,7 @@ public class FacialExpression : MonoBehaviour
     //AU4
     private int BrowsIn_LeftWeightBack = 0;
     private int BrowsIn_RightWeightBack = 0;
-    private int BrowsDown_LeftWeightBack = 0;
+    private int BrowsDown_LeftWeightBack = 15;
     private int BrowsDown_RightWeightBack = 0;
     //AU5
     private int EyesWide_LeftWeightBack = 0;

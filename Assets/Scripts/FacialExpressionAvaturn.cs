@@ -39,11 +39,27 @@ public class FacialExpressionAvaturn : MonoBehaviour
     private float deltaBlink;
     private int choice;
     private float timeBetweenViseme = 0.175f;
-    private float timeBetweenBlink = 5.000f;
-    private float facialExpressionDuration = 2.0f;
+    private float timeBetweenBlink = 4.0f;
+    private float facialExpressionDuration = 3.5f;
     private int[] aus = { 0 };
 
-    public AnimationCurve animationCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 1.0f, 1.0f);
+
+
+
+
+    public AnimationCurve animationCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+    //public AnimationCurve animationCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 1.0f, 1.0f);
+    private float microExpressionTimer = 0f;
+    private Dictionary<int, int> targetValues = new Dictionary<int, int>();
+    private float blendStartTime;
+    private float blendDuration = 1f;
+    private float decaySpeed = 40f; // vitesse de retour au neutre
+    private bool autoDecay = true;
+
+
+
+
+
 
     /*Pour chaque paramètre du visage, on va conserver la valeur cible, vers laquelle on souhaite que le muscle du visage aille,
     * et la valeur précédente (dans le paramètre Back) afin de pouvoir interpoler ensuite entre ces deux valeurs pour animer en douceur le visage
@@ -184,14 +200,6 @@ public class FacialExpressionAvaturn : MonoBehaviour
             else
             {
                 setVisemeNeutral();
-                if (now - referenceFaceTime > facialExpressionDuration)
-                {
-                    //UpdateFaceBackWeight();
-
-                    setFaceNeutral();
-                    //referenceFaceTime = Time.time;
-
-                }
             }
             //Interpolation des animations
             lerpViseme(lipLerp);
@@ -208,10 +216,113 @@ public class FacialExpressionAvaturn : MonoBehaviour
         {
             unblink();
             referenceBlinkTime = now;
-            deltaBlink = UnityEngine.Random.Range(-1.0f, 1.0f);
+            deltaBlink = UnityEngine.Random.Range(-2.0f, 2.0f);
+        }
+
+
+
+
+
+
+
+
+
+
+
+        if (audioSource.isPlaying && facialExpressionDuration < 1.0f)
+        {
+            TriggerMicroExpression();
+            microExpressionTimer = 0;
+        }
+
+        if (UnityEngine.Random.value < 0.002f)
+        {
+            setFacialAUs(new int[] { 63 }, new int[] { 20 }, 0.5f);
         }
 
     }
+
+
+
+
+
+
+
+
+
+    void TriggerMicroExpression()
+    {
+        int choice = UnityEngine.Random.Range(0, 3);
+
+        switch (choice)
+        {
+            case 0:
+                setFacialAUs(new int[] { 1 }, new int[] { 20 }, 0.4f);
+                break;
+
+            case 1:
+                setFacialAUs(new int[] { 4 }, new int[] { 15 }, 0.3f);
+                break;
+
+            case 2:
+                setFacialAUs(new int[] { 12 }, new int[] { 10 }, 0.4f);
+                break;
+        }
+    }
+
+    public void ReturnToNeutralSmooth()
+    {
+        facialExpressionDuration = 1.5f;
+        referenceFaceTime = Time.time;
+
+        List<int> values = Enumerable.ToList(faceAnimationParameters.Keys);
+
+        foreach (int v in values)
+        {
+            targetValues[v] = 0;
+            blendStartTime = Time.time;
+            blendDuration = 1.5f;
+        }
+    }
+
+    public void ReturnToNeutralSmoothPartial()
+    {
+        blendStartTime = Time.time;
+        blendDuration = 0.5f;
+
+        foreach (var key in faceAnimationParameters.Keys.ToList())
+        {
+            // 🔥 on réduit au lieu de couper
+            targetValues[key] = (int)(faceAnimationParameters[key].Value * 0.3f);
+        }
+    }
+
+    public void BlendToExpression(int[] aus, int[] intensities, float duration)
+    {
+        blendStartTime = Time.time;
+        blendDuration = duration;
+
+        // 🔥 IMPORTANT : ne pas clear → on blend avec l'ancien état
+        foreach (var key in faceAnimationParameters.Keys.ToList())
+        {
+            targetValues[key] = 0; // base neutre
+        }
+
+        for (int i = 0; i < aus.Length; i++)
+        {
+            targetValues[aus[i]] = intensities[i];
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
     public void setFacialAUs(int[] aus, int[] intensities, float duration)
     {
@@ -256,7 +367,7 @@ public class FacialExpressionAvaturn : MonoBehaviour
     {
         setVisemeNeutral();
         List<string> values = Enumerable.ToList(visemeAnimationParameters.Keys);
-        visemeAnimationParameters[values.ElementAt(choice)] = 100;
+        visemeAnimationParameters[values.ElementAt(choice)] = UnityEngine.Random.Range(60, 100);
     }
 
 
@@ -303,18 +414,32 @@ public class FacialExpressionAvaturn : MonoBehaviour
      */
     public void lerpFace(float lerp)
     {
-        foreach (SkinnedMeshRenderer SkinnedMeshRendererTarget in skinnedMeshRenderers)
-        {
-            Mesh m = SkinnedMeshRendererTarget.sharedMesh;
-            foreach (KeyValuePair<int, AnimationParameter> t in faceAnimationParameters)
-            {
-                foreach (string name in t.Value.Names)
-                {
-                    int i = getBlendShapeIndex(SkinnedMeshRendererTarget, name);
-                    if (i >= 0)
-                        SkinnedMeshRendererTarget.SetBlendShapeWeight(i, (int)Mathf.Lerp(0, faceAnimationParameters[t.Key].Value, animationCurve.Evaluate(lerp)));
+        float t = (Time.time - blendStartTime) / blendDuration;
+        t = Mathf.Clamp01(t);
 
+        foreach (SkinnedMeshRenderer smr in skinnedMeshRenderers)
+        {
+            foreach (var param in faceAnimationParameters)
+            {
+                int current = param.Value.Value;
+                int target = targetValues.ContainsKey(param.Key) ? targetValues[param.Key] : 0;
+
+                int blended = (int)Mathf.Lerp(current, target, animationCurve.Evaluate(t));
+
+                // 🔥 AJOUT : relaxation naturelle
+                if (autoDecay && !targetValues.ContainsKey(param.Key))
+                {
+                    blended = (int)Mathf.Lerp(blended, 0, Time.deltaTime * decaySpeed);
                 }
+
+                foreach (string name in param.Value.Names)
+                {
+                    int i = getBlendShapeIndex(smr, name);
+                    if (i >= 0)
+                        smr.SetBlendShapeWeight(i, blended);
+                }
+
+                param.Value.Value = blended;
             }
         }
     }
