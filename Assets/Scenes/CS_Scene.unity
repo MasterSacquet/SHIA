@@ -622,11 +622,25 @@ PrefabInstance:
         type: 3}
       propertyPath: preprompt
       value: "Tu es un raconteur d'histoire. R\xE9pond exactement ce texte \xE0 chaque
-        fois que l'on te pose une question :\n\n{JOY} Bonjour ! Je suis tr\xE8s heureux
-        de te rencontrer.\n\n{SURPRISE} Mais attends... tu es d\xE9j\xE0 venu ici
-        avant ?\n\n{SAD} Je me souviens maintenant... c'\xE9tait il y a longtemps.\n\n{ANGER}
-        Pourquoi es-tu parti sans rien dire ?\n\n{NEUTRAL} Enfin... ce qui est fait
-        est fait.\n\n{JOY} Je suis content que tu sois revenu."
+        fois que l'on te pose une question :\n\n{NEUTRAL} Ce matin-l\xE0, Thomas
+        se leva comme d'habitude, pr\xE9para son caf\xE9 et parcourut les nouvelles
+        du jour.\n\n{JOY} Puis il aper\xE7ut une enveloppe gliss\xE9e sous sa porte.
+        \xC0 l'int\xE9rieur, une lettre de son ami d'enfance qu'il n'avait plus vu
+        depuis quinze ans.\n\n{SURPRISE} Mais en arrivant au caf\xE9 indiqu\xE9,
+        il s'arr\xEAta net. La salle \xE9tait remplie de visages familiers.\n\n{JOY}
+        Tr\xE8s vite, l\u2019\xE9motion laissa place \xE0 un \xE9clat de rire. Les
+        accolades s\u2019encha\xEEn\xE8rent, les voix se superpos\xE8rent.\n\n{DISGUST}
+        Au milieu de la f\xEAte, quelqu\u2019un lui proposa une vieille sp\xE9cialit\xE9
+        locale qu\u2019il adorait enfant.\n\n{NEUTRAL} Les heures pass\xE8rent, rythm\xE9es
+        par les conversations, les souvenirs et les verres qui s\u2019entrechoquaient.\n\n{FEAR}
+        \xC0 un moment, Thomas sentit une \xE9trange inqui\xE9tude monter en lui.
+        Et si tout cela n\u2019\xE9tait qu\u2019un instant \xE9ph\xE9m\xE8re ?\n\n{SAD}
+        En fin de soir\xE9e, alors que la salle se vidait peu \xE0 peu, son regard
+        se posa sur une chaise rest\xE9e vide. \n\n{ANGER} Une tension br\xE8ve serra
+        sa m\xE2choire. Il en voulut au temps, \xE0 la vie, \xE0 cette injustice
+        silencieuse qui arrache les gens sans pr\xE9venir.\n\n{JOY} Puis son ami
+        d\u2019enfance s\u2019approcha et posa une main chaleureuse sur son \xE9paule.
+        Thomas inspira profond\xE9ment."
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
@@ -641,7 +655,7 @@ PrefabInstance:
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: urlOllama
-      value: https://elated-bohr.mydocker-run-vd.centralesupelec.fr/
+      value: https://silly-satoshi.mydocker-run-vd.centralesupelec.fr/
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
@@ -650,9 +664,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
+      propertyPath: attackRatio
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
       propertyPath: buttonPanel
       value: 
       objectReference: {fileID: 1533015126}
+    - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: speechSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: decayExponent
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: informationPanel
@@ -668,11 +697,21 @@ PrefabInstance:
       propertyPath: usePhonemeGenerator
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2716520221322284018, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: globalEmotionIntensity
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2898898709790559419, guid: 2d6065db2e3517b4db090ab89b5ccbff,
+        type: 3}
+      propertyPath: m_Pitch
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2898898709790559419, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: m_Resource
       value: 
-      objectReference: {fileID: 8300000, guid: 32d0111ffe559f94ea44791d968566b8, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 3276341691487978327, guid: 2d6065db2e3517b4db090ab89b5ccbff,
         type: 3}
       propertyPath: 'm_BlendShapeWeights.Array.data[0]'

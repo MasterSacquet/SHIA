@@ -504,12 +504,27 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     {
         switch (emotion)
         {
-            case "JOY": return (new int[] { 6, 12 }, new int[] { 80, 90 });
-            case "SAD": return (new int[] { 1, 4, 15 }, new int[] { 60, 70, 80 });
-            case "ANGER": return (new int[] { 4, 5, 7, 24 }, new int[] { 80, 70, 60, 70 });
-            case "SURPRISE": return (new int[] { 1, 2, 5, 26 }, new int[] { 80, 80, 70, 60 });
-            case "NEUTRAL": return (new int[] { }, new int[] { });
-            default: return (new int[] { }, new int[] { });
+            case "JOY":
+                return (new int[] { 6, 12, 25 }, new int[] { 80, 90, 30 });
+
+            case "SAD":
+                return (new int[] { 1, 4, 15, 17 }, new int[] { 60, 70, 70, 40 });
+
+            case "ANGER":
+                return (new int[] { 4, 7, 23, 24, 17 }, new int[] { 90, 70, 60, 80, 50 });
+
+            case "SURPRISE":
+                return (new int[] { 1, 2, 5, 26 }, new int[] { 80, 80, 90, 20 });
+
+            case "FEAR":
+                return (new int[] { 1, 2, 4, 5, 20, 26 }, new int[] { 70, 70, 60, 80, 50, 30 });
+
+            case "DISGUST":
+                return (new int[] { 9, 10, 17 }, new int[] { 80, 70, 50 });
+
+            case "NEUTRAL":
+            default:
+                return (new int[] { }, new int[] { });
         }
     }
 

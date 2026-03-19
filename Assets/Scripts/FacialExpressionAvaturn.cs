@@ -107,12 +107,16 @@ public class FacialExpressionAvaturn : MonoBehaviour
         faceAnimationParameters.Add(20, new AnimationParameter(20, new List<string> { "mouthStretchLeft", "mouthStretchRight" }));
         //AU22
         faceAnimationParameters.Add(22, new AnimationParameter(22, new List<string> { "mouthFunnel" }));
+        //AU23
+        faceAnimationParameters.Add(23, new AnimationParameter(23, new List<string> { "mouthPressLeft", "mouthPressRight" }));
         //AU24
         faceAnimationParameters.Add(24, new AnimationParameter(24, new List<string> { "mouthPressLeft", "mouthPressRight" }));
+        //AU25
+        faceAnimationParameters.Add(25, new AnimationParameter(25, new List<string> { "mouthOpen" }));
         //AU26
         faceAnimationParameters.Add(26, new AnimationParameter(26, new List<string> { "jawOpen" }));
         //AU27
-        faceAnimationParameters.Add(27, new AnimationParameter(27, new List<string> { "jawOpen" }));
+        faceAnimationParameters.Add(27, new AnimationParameter(27, new List<string> { "jawStretch" }));
         //AU28
         faceAnimationParameters.Add(28, new AnimationParameter(28, new List<string> { "mouthRollLower", "mouthRollUpper" }));
         //AD29

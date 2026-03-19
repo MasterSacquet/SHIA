@@ -324,6 +324,11 @@ MonoBehaviour:
   piperPort: 5000
   speakerID: 1
   usePhonemeGenerator: 0
+  speechSpeed: 2
+  emotionOverlap: 0.85
+  globalEmotionIntensity: 1
+  attackRatio: 0.25
+  decayExponent: 1
 --- !u!114 &2935881028399906947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,6 +405,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  decaySpeed: 1
+  smoothing: 0.85
+  accumulationWeight: 1
+  blendResponsiveness: 0.1
 --- !u!114 &7698098854903832606
 MonoBehaviour:
   m_ObjectHideFlags: 0
