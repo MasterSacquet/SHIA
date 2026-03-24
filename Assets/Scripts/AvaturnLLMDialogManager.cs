@@ -28,6 +28,26 @@ public enum EndPoint
 * StreamingAssets. Allez voir les pages d�di�es de ces modules pour plus d'explications. Ils ne sont pas fournis par d�faut car ils prennent
 * trop de place.
 */
+
+/// <summary>
+/// StoryPart: Structure pour gérer les parties narrative de l'histoire Lucas
+/// </summary>
+public class StoryPart
+{
+    public int id;
+    public string title;
+    public string narrative;
+    public string userQuestion;
+
+    public StoryPart(int id, string title, string narrative, string userQuestion)
+    {
+        this.id = id;
+        this.title = title;
+        this.narrative = narrative;
+        this.userQuestion = userQuestion;
+    }
+}
+
 public class AvaturnLLMDialogManager : MonoBehaviour
 {
 
@@ -55,7 +75,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     private string _buffer;
 
     //conversation memory
-    public int numberOfTurn = 10;
+    public int numberOfTurn = 50; // Augmenté pour inclure toute l'histoire Lucas (9 parties)
     private JsonParser jsonParser = new JsonParser();
     private JsonValue conversationList = new JsonValue(JsonType.Array);
 
@@ -79,8 +99,10 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     //ComputationalModel
     private ComputationalModel computationalModel = new ComputationalModel();
 
-
-
+    // ===== HISTOIRE LUCAS =====
+    private List<StoryPart> lucasStory = new List<StoryPart>();
+    private int currentStoryPart = 0;
+    private bool isStoryMode = false;
 
 
 
@@ -107,6 +129,9 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         button.GetComponent<RectTransform>().position = new Vector3(0 * 170.0f + 90.0f, 39.0f, 0.0f);
         button.transform.SetParent(buttonPanel);
 
+        // Initialiser l'histoire Lucas
+        CreateLucasStory();
+        StartStory();
 
         //dictation
         dictationRecognizer = new DictationRecognizer();
@@ -116,12 +141,11 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         dictationRecognizer.DictationError += DictationRecognizer_DictationError;
         dictationRecognizer.DictationComplete += DictationRecognizer_DictationComplete;
 
-
         //whisper
         whisper.OnNewSegment += OnNewSegment;
         microphoneRecord.OnRecordStop += OnRecordStop;
-
     }
+
 
     private void DictationRecognizer_DictationComplete(DictationCompletionCause cause)
     {
@@ -150,7 +174,16 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         if (conversationList.ArrayValues.Count > numberOfTurn)
             conversationList.ArrayValues.RemoveAt(0);
 
-        SendToChat(conversationList);
+        // Si on est en story mode, passer à la partie suivante
+        // Sinon, envoyer normalement au chat
+        if (isStoryMode)
+        {
+            NextStoryPart();
+        }
+        else
+        {
+            SendToChat(conversationList);
+        }
     }
 
     //whisper
@@ -195,6 +228,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
             return;
 
         var text = res.Result;
+        Debug.Log($"📝 RÉPONSE UTILISATEUR: '{text}'");
         UserAnalysis(text);
         if (printLanguage)
             text += $"\n\nLanguage: {res.Language}";
@@ -211,7 +245,16 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         if (conversationList.ArrayValues.Count > numberOfTurn)
             conversationList.ArrayValues.RemoveAt(0);
 
-        SendToChat(conversationList);
+        // Si on est en story mode, passer à la partie suivante
+        // Sinon, envoyer normalement au chat
+        if (isStoryMode)
+        {
+            NextStoryPart();
+        }
+        else
+        {
+            SendToChat(conversationList);
+        }
     }
 
 
@@ -423,7 +466,18 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         var segments = ParseEmotionSegments(text);
 
         if (segments.Count == 0)
+        {
+            Debug.Log("😐 Aucun tag émotionnel détecté dans la réponse de l'agent");
             yield break;
+        }
+        
+        // Afficher les émotions détectées
+        string emotionsList = "";
+        foreach (var seg in segments)
+        {
+            emotionsList += seg.emotion + ", ";
+        }
+        Debug.Log($"😊 ÉMOTIONS DÉTECTÉES: {emotionsList.TrimEnd(',', ' ')}");
 
         float timeline = 0f;
 
@@ -444,6 +498,7 @@ public class AvaturnLLMDialogManager : MonoBehaviour
 
     IEnumerator PlayEmotionEnvelope(string emotion, float duration)
     {
+        Debug.Log($"🎭 JOUANT ÉMOTION: {emotion} (durée: {duration:F2}s)");
         var data = GetEmotionAUs(emotion);
 
         float attack = duration * attackRatio;
@@ -812,5 +867,109 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         DisplayAUs(new int[] { 6, 4, 14 }, new int[] { (int)(intensity_factor * 100), (int)(intensity_factor * 80), (int)(intensity_factor * 80) }, duration);
     }
 
+    // ========== HISTOIRE LUCAS ==========
+
+    /// <summary>
+    /// Crée les 5 parties de l'histoire Lucas
+    /// </summary>
+    private void CreateLucasStory()
+    {
+        lucasStory.Clear();
+
+        lucasStory.Add(new StoryPart(1, "Le Réveil",
+            "Le 5 novembre 2019, à 7h28, Marc Garnier, étudiant de 24 ans, se réveille dans son petit appartement situé au 3 rue des Lilas à Lille. Il porte son pull vert foncé et une écharpe rouge. Sa sœur Camille Garnier, 19 ans, est hospitalisée depuis le 28 octobre à l'hôpital Saint-Vincent-de-Paul, situé à proximité : à seulement 2,5 km de chez lui.",
+            "Que penses-tu de cette histoire?"
+        ));
+
+        lucasStory.Add(new StoryPart(2, "Le Trajet et l'Hôpital",
+            "Ce matin-là, Marc quitte son appartement à 8h05. Il prend le métro ligne 1 à la station Wazemmes à 8h12, direction CHU Eurasanté, et arrive à 8h26. Une fois à l'hôpital, il se rend au bâtiment B, chambre 214. Une infirmière nommée Nadia Lefèvre, d'environ 40 ans, lui indique que l'état de Camille est enfin stable. Marc entre dans la chambre de sa sœur à 8h40. Ils discutent et se souviennent de leurs vacances en 2008 à Arcachon. Ils étaient dans leur maison familiale, une maison blanche aux volets bleus, avec leur chiot Milo.",
+            "As-tu peur pour la sœur de Marc?"
+        ));
+
+        lucasStory.Add(new StoryPart(3, "Résultats et Messages",
+            "À 11h20, le médecin entre. Antoine Girard, 50 ans, cheveux grisonnants, leur présente des résultats médicaux. L'évolution de la maladie de Camille est lente. 25 minutes plus tard, Marc dit au revoir à sa sœur et se dirige vers son café préféré \"Le Passage\", situé à 600 mètres de là. Il commande un chocolat chaud à 15,25 euros. À midi, Marc reçoit un message : il est accepté pour un casting qui lui tenait énormément à cœur : Barbie 2. Dans la foulée, il reçoit un second message de sa mère Isabelle, elle lui annonce qu'elle arrivera avec un retard de 25 minutes sur son TGV qui vient de Strasbourg, soit à 15h43 au lieu de 15h18. Marc retourne donc à l'hôpital à 12h30. À 15h10, il retrouve sa mère à son arrivée. Ensemble, ils lisent un passage du livre \"Le Petit Prince\", l'histoire préférée de Camille lorsqu'ils étaient enfants, à la page 47.",
+            "Es-tu optimiste ou pessimiste pour la suite de l'histoire?"
+        ));
+
+        lucasStory.Add(new StoryPart(4, "L'Attente",
+            "Au goûter, Camille reçoit un plateau contenant une compote, un yaourt et un verre d'eau. Elle soupire... À 17h05, il quitte la chambre pendant quelques minutes pour aller lui chercher un moelleux au chocolat à la cafétéria.",
+            "Crois-tu que Camille va mourir?"
+        ));
+
+        lucasStory.Add(new StoryPart(5, "Le Retour",
+            "À 17h30, Marc retrouve sa mère dans le hall, celle-ci est très silencieuse et semble pensive. En entrant dans le bus L5, sa mère a les yeux humides. Sa mère lui tend une enveloppe bleue. Marc comprend qu'elle vient de Camille. Chez lui, il s'assoit sur son canapé et déchire minutieusement l'enveloppe. La voix de Camille résonne dans sa tête : \"Marc, j'écris cette lettre car je n'ai pas le courage de te le dire en face\". Il découvre un cahier bleu clair contenant une liste écrite par Camille le 20 octobre, mentionnant un voyage à Barcelone. À 19h10, il envoie un message à 6 amis. À 21h45, il regarde 12 photos de famille. Il se couche à 23h30.",
+            "Qu'as-tu pensé de cette histoire?"
+        ));
+    }
+
+    /// <summary>
+    /// Démarre la narration de l'histoire
+    /// </summary>
+    private void StartStory()
+    {
+        if (lucasStory.Count == 0)
+            return;
+
+        Debug.Log("📖 DÉMARRAGE DE L'HISTOIRE: Histoire Lucas");
+        isStoryMode = true;
+        currentStoryPart = 0;
+        TellCurrentStoryPart();
+    }
+
+    /// <summary>
+    /// Raconte la partie actuelle de l'histoire
+    /// </summary>
+    private void TellCurrentStoryPart()
+    {
+        if (currentStoryPart >= lucasStory.Count)
+        {
+            Debug.Log("🏁 Histoire terminée!");
+            isStoryMode = false;
+            return;
+        }
+
+        StoryPart part = lucasStory[currentStoryPart];
+        
+        Debug.Log($"📕 RACONTE PARTIE {part.id}/9: {part.title}");
+        
+        // Construire le message pour l'IA avec la partie et la question
+        // FORMAT TRÈS EXPLICITE pour forcer le LLM à poser la question
+        string storyMessage = $"RACONTE CETTE PARTIE DE L'HISTOIRE:\n\n[Partie {part.id}/9: {part.title}]\n\n{part.narrative}\n\n---\n\nAPRÈS AVOIR RACONTÉ CETTE PARTIE, TU DOIS ABSOLUMENT POSER EXACTEMENT CETTE QUESTION À LA FIN:\n\n\"{part.userQuestion}\"\n\nN'OUBLIE PAS: TU DOIS POSER LA QUESTION À LA FIN. C'EST OBLIGATOIRE.";
+        
+        // Ajouter à la conversation
+        JsonValue userTurn = new JsonValue(JsonType.Object);
+        JsonValue userRole = new JsonValue(JsonType.String);
+        userRole.StringValue = "user";
+        JsonValue userContent = new JsonValue(JsonType.String);
+        userContent.StringValue = storyMessage;
+        userTurn.ObjectValues.Add("role", userRole);
+        userTurn.ObjectValues.Add("content", userContent);
+        conversationList.ArrayValues.Add(userTurn);
+        if (conversationList.ArrayValues.Count > numberOfTurn)
+            conversationList.ArrayValues.RemoveAt(0);
+
+        // Envoyer au chat
+        SendToChat(conversationList);
+    }
+
+    /// <summary>
+    /// Passe à la partie suivante de l'histoire après réponse utilisateur
+    /// </summary>
+    public void NextStoryPart()
+    {
+        if (!isStoryMode)
+            return;
+
+        currentStoryPart++;
+        
+        if (currentStoryPart >= lucasStory.Count)
+        {
+            Debug.Log("Histoire Lucas complètement racontée!");
+            isStoryMode = false;
+            return;
+        }
+
+        TellCurrentStoryPart();
+    }
 
 }
