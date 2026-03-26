@@ -67,14 +67,14 @@ namespace Assets.Scripts.Emotions
         }
 
         // ===== État interne =====
-        private Emotion currentEmotion = Emotion.Neutral;
+        private Emotion currentEmotion = Emotion.Surprise;
         private EmotionalDimension currentDimension = new EmotionalDimension(0, 0, 0);
         private List<EmotionSnapshot> history = new List<EmotionSnapshot>();
 
         // ===== Événements =====
         public event Action<Emotion, Emotion> OnEmotionChanged; // from, to
 
-        public EmotionalState(Emotion initialEmotion = Emotion.Neutral)
+        public EmotionalState(Emotion initialEmotion = Emotion.Surprise)
         {
             currentEmotion = initialEmotion;
             currentDimension = new EmotionalDimension(0, 0, 0);
@@ -108,10 +108,10 @@ namespace Assets.Scripts.Emotions
             if (currentDimension.intensity < 0.05f)
             {
                 currentDimension.intensity = 0f;
-                // Optionnel: revenir à Neutral si intensité trop faible
-                if (currentEmotion != Emotion.Neutral)
+                // Optionnel: revenir à Surprise si intensité trop faible
+                if (currentEmotion != Emotion.Surprise)
                 {
-                    BlendTowardEmotion(Emotion.Neutral, 0.2f);
+                    BlendTowardEmotion(Emotion.Surprise, 0.2f);
                 }
             }
         }

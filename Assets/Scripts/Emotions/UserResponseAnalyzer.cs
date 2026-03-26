@@ -149,14 +149,14 @@ namespace Assets.Scripts.Emotions
         /// </summary>
         private void AnalyzeByContent(string text, AnalysisResult result)
         {
-            // Si la réponse contient beaucoup de points d'interrogation → intéressé
+            // Si la réponse contient beaucoup de points d'interrogation → surpris
             int questionMarks = text.Split('?').Length - 1;
             if (questionMarks > 1)
             {
                 result.dominantValence = 0f;
                 result.dominantArousal = 0.3f;
                 result.estimatedIntensity = 0.4f;
-                result.predictedEmotion = Emotion.Interest;
+                result.predictedEmotion = Emotion.Surprise;
                 return;
             }
 
@@ -172,21 +172,21 @@ namespace Assets.Scripts.Emotions
                 return;
             }
 
-            // Si points de suspension → indécis ou mystérieux
+            // Si points de suspension → dégoûté ou mystérieux
             if (text.Contains("..."))
             {
                 result.dominantArousal = -0.3f;
                 result.estimatedIntensity = 0.3f;
                 result.dominantValence = 0f;
-                result.predictedEmotion = Emotion.Boredom;
+                result.predictedEmotion = Emotion.Disgust;
                 return;
             }
 
-            // Par défaut: neutre
+            // Par défaut: surprise
             result.dominantValence = 0f;
             result.dominantArousal = 0f;
             result.estimatedIntensity = 0.2f;
-            result.predictedEmotion = Emotion.Neutral;
+            result.predictedEmotion = Emotion.Surprise;
         }
 
         /// <summary>
@@ -247,9 +247,9 @@ namespace Assets.Scripts.Emotions
             bool positiveValence = valence > 0.1f;
             bool highArousal = arousal > 0.1f;
 
-            // Centre du graphique → neutre
+            // Centre du graphique → surprise (fallback)
             if (Mathf.Abs(valence) < 0.2f && Mathf.Abs(arousal) < 0.2f)
-                return Emotion.Neutral;
+                return Emotion.Surprise;
 
             // Quadrant 1: Positif + Très activé
             if (positiveValence && highArousal && arousal > 0.4f)
@@ -257,7 +257,7 @@ namespace Assets.Scripts.Emotions
 
             // Quadrant 1: Positif + Modérément activé
             if (positiveValence && highArousal && arousal <= 0.4f)
-                return Emotion.Interest;
+                return Emotion.Surprise;
 
             // Quadrant 2: Négatif + Très activé + High arousal
             if (!positiveValence && highArousal && arousal > 0.5f)
@@ -268,7 +268,7 @@ namespace Assets.Scripts.Emotions
 
             // Quadrant 2: Négatif + Modérément activé
             if (!positiveValence && highArousal)
-                return arousal > 0.3f ? Emotion.Frustration : Emotion.Anger;
+                return arousal > 0.3f ? Emotion.Anger : Emotion.Anger;
 
             // Quadrant 3: Négatif + Peu activé
             if (!positiveValence && !highArousal)
@@ -279,8 +279,8 @@ namespace Assets.Scripts.Emotions
                 // Disgust si légèrement négatif + très calme
                 if (arousal < -0.4f)
                     return Emotion.Disgust;
-                // Boredom si très calme
-                return Emotion.Boredom;
+                // Disgust si très calme
+                return Emotion.Disgust;
             }
 
             // Quadrant 4: Positif + Peu activé
@@ -288,7 +288,7 @@ namespace Assets.Scripts.Emotions
                 return Emotion.Joy; // Contentement tranquille
 
             // Par défaut
-            return Emotion.Neutral;
+            return Emotion.Surprise;
         }
 
         /// <summary>
@@ -312,7 +312,7 @@ namespace Assets.Scripts.Emotions
                 dominantArousal = 0f,
                 estimatedIntensity = 0f,
                 matchedKeywords = new List<string>(),
-                predictedEmotion = Emotion.Neutral,
+                predictedEmotion = Emotion.Surprise,
                 wordCount = 0,
                 containsIntensifiers = false,
                 rawText = ""

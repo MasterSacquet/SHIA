@@ -1,6 +1,7 @@
 using ACTA;
 using Assets.Scripts;
 using Assets.Scripts.Utils;
+using Assets.Scripts.Emotions;
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
@@ -14,6 +15,7 @@ using Button = UnityEngine.UI.Button;
 using Debug = UnityEngine.Debug;
 using Text = UnityEngine.UI.Text;
 using System.Collections.Generic;
+using Emotion = Assets.Scripts.Emotions.EmotionalState.Emotion;
 
 public enum EndPoint
 {
@@ -103,6 +105,44 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     private List<StoryPart> lucasStory = new List<StoryPart>();
     private int currentStoryPart = 0;
     private bool isStoryMode = false;
+    private string lastUserResponse = "";
+    private Emotion detectedUserEmotion = Emotion.Surprise;
+    private ContextualEmotionMapper emotionMapper = new ContextualEmotionMapper();
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /// <summary>
+    /// Mode interactif de l'histoire (0 ou 1)
+    /// 0: Parties 0-3 non-interactives (automatiques), Parties 4-7 interactives (questions)
+    /// 1: Parties 0-3 interactives (questions), Parties 4-7 non-interactives (automatiques)
+    /// </summary>
+    public int storyInteractionMode = 0;
+
+
+
+
+
+
+
+
 
 
 
@@ -174,11 +214,21 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         if (conversationList.ArrayValues.Count > numberOfTurn)
             conversationList.ArrayValues.RemoveAt(0);
 
-        // Si on est en story mode, passer à la partie suivante
-        // Sinon, envoyer normalement au chat
+        // Si on est en story mode et que la partie actuelle est INTERACTIVE
+        // Stocker la réponse et passer à la partie suivante
+        // Sinon, envoyer normalement au chat (ou ignorer si partie non-interactive)
         if (isStoryMode)
         {
-            NextStoryPart();
+            if (IsCurrentPartInteractive())
+            {
+                lastUserResponse = text;
+                NextStoryPart();
+            }
+            else
+            {
+                // Partie non-interactive: ignorer la réponse de l'utilisateur
+                Debug.Log("ℹ️ Partie non-interactive: réponse utilisateur ignorée");
+            }
         }
         else
         {
@@ -221,6 +271,13 @@ public class AvaturnLLMDialogManager : MonoBehaviour
 
     private async void OnRecordStop(AudioChunk audioChunk)
     {
+        // Ignorer complètement si l'histoire est terminée
+        if (!isStoryMode)
+        {
+            Debug.Log("🔇 OnRecordStop() ignoré: histoire terminée ou pas en mode story");
+            return;
+        }
+
         _buffer = "";
 
         var res = await whisper.GetTextAsync(audioChunk.Data, audioChunk.Frequency, audioChunk.Channels);
@@ -229,7 +286,13 @@ public class AvaturnLLMDialogManager : MonoBehaviour
 
         var text = res.Result;
         Debug.Log($"📝 RÉPONSE UTILISATEUR: '{text}'");
-        UserAnalysis(text);
+        
+        // En mode histoire, ne pas faire d'analyse générique
+        if (!isStoryMode)
+        {
+            UserAnalysis(text);
+        }
+        
         if (printLanguage)
             text += $"\n\nLanguage: {res.Language}";
         Text textp = textPanel.transform.GetComponentInChildren<Text>().GetComponent<Text>();
@@ -245,11 +308,21 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         if (conversationList.ArrayValues.Count > numberOfTurn)
             conversationList.ArrayValues.RemoveAt(0);
 
-        // Si on est en story mode, passer à la partie suivante
-        // Sinon, envoyer normalement au chat
+        // Si on est en story mode et que la partie actuelle est INTERACTIVE
+        // Analyser l'émotion CONTEXTUELLE et passer à la partie suivante
+        // Sinon, envoyer normalement au chat (ou ignorer si partie non-interactive)
         if (isStoryMode)
         {
-            NextStoryPart();
+            if (IsCurrentPartInteractive())
+            {
+                lastUserResponse = text;
+                NextStoryPart();  // ✅ Analyse contextuelle basée sur la question et la partie
+            }
+            else
+            {
+                // Partie non-interactive: ignorer la réponse de l'utilisateur
+                Debug.Log("ℹ️ Partie non-interactive: réponse utilisateur ignorée");
+            }
         }
         else
         {
@@ -331,6 +404,17 @@ public class AvaturnLLMDialogManager : MonoBehaviour
                 conversationList.ArrayValues.RemoveAt(0);
             
             PlayAudio(_response);
+            
+            // Debug: Afficher l'état du mode et de l'interactivité
+            bool shouldAutoAdvance = isStoryMode && !IsCurrentPartInteractive();
+            Debug.Log($"🔍 Mode={storyInteractionMode}, isStoryMode={isStoryMode}, currentPart={currentStoryPart}, IsInteractive={IsCurrentPartInteractive()}, ShouldAutoAdvance={shouldAutoAdvance}");
+            
+            // Si c'est une partie non-interactive en story mode, avancer automatiquement après l'audio
+            if (shouldAutoAdvance)
+            {
+                Debug.Log("⏱️ Partie non-interactive: avancement automatique programmé après l'audio");
+                StartCoroutine(AutoAdvanceStoryPartAfterAudio());
+            }
         }
     }
 
@@ -430,10 +514,68 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     {
         StopAllCoroutines(); // 🔥 évite les overlaps
 
-        StartCoroutine(ProcessEmotionSequence(response));
+        // ✅ UTILISER L'ÉMOTION DÉTECTÉE DE LA RÉPONSE PRÉCÉDENTE
+        // Au lieu d'attendre des tags {EMOTION} du LLM
+        if (isStoryMode && detectedUserEmotion != Emotion.Surprise)
+        {
+            Debug.Log($"🎭 UTILISATION DE L'ÉMOTION DÉTECTÉE: {detectedUserEmotion}");
+            StartCoroutine(PlayDetectedEmotion(detectedUserEmotion, response));
+        }
+        else
+        {
+            // Si pas d'émotion spécifique, essayer de parser les tags (fallback)
+            var segments = ParseEmotionSegments(response);
+            if (segments.Count > 0)
+            {
+                StartCoroutine(ProcessEmotionSequence(response));
+            }
+            else
+            {
+                Debug.Log("😐 Aucune émotion détectée via analyse ou tags");
+            }
+        }
 
         // Supprime les tags pour le TTS
         return Regex.Replace(response, "{.*?}", "").Trim();
+    }
+
+    /// <summary>
+    /// Joue l'émotion détectée à travers toute la durée du texte
+    /// </summary>
+    IEnumerator PlayDetectedEmotion(Emotion emotion, string text)
+    {
+        Debug.Log($"🎭 JOUANT ÉMOTION DÉTECTÉE: {emotion}");
+        
+        // Estimer la durée du texte
+        float totalDuration = EstimateDuration(text);
+        Debug.Log($"⏱️ Durée estimée: {totalDuration:F2}s");
+        
+        // Jouer l'émotion pendant toda la durée
+        StartCoroutine(PlayEmotionEnvelope(EmotionToTag(emotion), totalDuration));
+        
+        yield return new WaitForSeconds(totalDuration);
+        Debug.Log($"✅ Émotion {emotion} jouée jusqu'à la fin");
+    }
+
+    /// <summary>
+    /// Convertit une enum Emotion en tag texte pour PlayEmotionEnvelope
+    /// </summary>
+    /// <summary>
+    /// Convertit une enum Emotion en tag texte pour PlayEmotionEnvelope
+    /// UNIQUEMENT les 6 émotions primaires
+    /// </summary>
+    private string EmotionToTag(Emotion emotion)
+    {
+        return emotion switch
+        {
+            Emotion.Joy => "JOY",
+            Emotion.Sadness => "SAD",
+            Emotion.Anger => "ANGER",
+            Emotion.Fear => "FEAR",
+            Emotion.Surprise => "SURPRISE",
+            Emotion.Disgust => "DISGUST",
+            _ => "SURPRISE"  // Fallback
+        };
     }
 
     List<EmotionSegment> ParseEmotionSegments(string text)
@@ -679,6 +821,52 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         StartCoroutine(ChatRequest(urlOllama + endPointS, data.ToJsonString()));
     }
 
+    /// <summary>
+    /// Envoie un message pour une partie de l'histoire SANS historique de conversation
+    /// Cela évite que l'historique ancien pollue la narration
+    /// </summary>
+    private void SendChatForStory(JsonValue storyMessage)
+    {
+        if (storyMessage.ArrayValues.Count == 0)
+            return;
+
+        JsonValue fullConv = new JsonValue(JsonType.Array);
+        
+        // Ajouter le systemPrompt
+        JsonValue systemTurn = new JsonValue(JsonType.Object);
+        JsonValue systemRole = new JsonValue(JsonType.String);
+        systemRole.StringValue = "system";
+        JsonValue systemContent = new JsonValue(JsonType.String);
+        systemContent.StringValue = Regex.Replace(Regex.Replace(preprompt, "[\"\']", ""), "\\s", " ");
+        systemTurn.ObjectValues.Add("role", systemRole);
+        systemTurn.ObjectValues.Add("content", systemContent);
+        fullConv.ArrayValues.Add(systemTurn);
+        
+        // Ajouter UNIQUEMENT le message de cette partie (PAS l'historique)
+        fullConv.ArrayValues.AddRange(storyMessage.ArrayValues);
+        
+        JsonValue data = new JsonValue(JsonType.Object);
+        JsonValue modelNameValue = new JsonValue(JsonType.String);
+        modelNameValue.StringValue = modelName;
+        data.ObjectValues.Add("model", modelNameValue);
+        data.ObjectValues.Add("messages", fullConv);
+        JsonValue streamValue = new JsonValue(JsonType.Boolean);
+        streamValue.BoolValue = false;
+        data.ObjectValues.Add("stream", streamValue);
+        
+        string endPointS = "";
+        if (endPoint == EndPoint.OpenWebUI)
+        {
+            endPointS = "api/chat/completions";
+        }
+        if (endPoint == EndPoint.Ollama)
+        {
+            endPointS = "api/chat";
+        }
+        
+        StartCoroutine(ChatRequest(urlOllama + endPointS, data.ToJsonString()));
+    }
+
     private void UserAnalysis(String content)
     {
 
@@ -851,11 +1039,39 @@ public class AvaturnLLMDialogManager : MonoBehaviour
 
 
     /*
-     * Cette m�thode permet de faire jouer des AUs � l'agent
+     * Cette méthode permet de faire jouer des AUs à l'agent
+     * Avec vérification de sécurité pour éviter les AUs invalides
      */
     public void DisplayAUs(int[] aus, int[] intensities, float duration)
     {
-        faceExpression.setFacialAUs(aus, intensities, duration);
+        // Vérification de sécurité : filtrer les AUs valides sur l'avatar
+        int[] validAUs = { 1, 2, 4, 5, 6, 7, 9, 10, 12, 14, 15, 16, 17, 18, 20, 22, 23, 24, 25, 26, 27 };
+        
+        List<int> safeAUs = new List<int>();
+        List<int> safeIntensities = new List<int>();
+        
+        for (int i = 0; i < aus.Length; i++)
+        {
+            if (System.Array.Exists(validAUs, element => element == aus[i]))
+            {
+                safeAUs.Add(aus[i]);
+                safeIntensities.Add(intensities[i]);
+            }
+            else
+            {
+                Debug.LogWarning($"⚠️ AU {aus[i]} n'existe pas sur l'avatar. AU ignoré.");
+            }
+        }
+        
+        if (safeAUs.Count > 0)
+        {
+            Debug.Log($"🎨 DisplayAUs sécurisé: AUs={string.Join(",", safeAUs)}, Duration={duration}");
+            faceExpression.setFacialAUs(safeAUs.ToArray(), safeIntensities.ToArray(), duration);
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ Aucun AU valide à afficher");
+        }
     }
 
     /*
@@ -870,36 +1086,96 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     // ========== HISTOIRE LUCAS ==========
 
     /// <summary>
-    /// Crée les 5 parties de l'histoire Lucas
+    /// Crée les 8 parties de l'histoire Thomas
     /// </summary>
     private void CreateLucasStory()
     {
         lucasStory.Clear();
 
-        lucasStory.Add(new StoryPart(1, "Le Réveil",
-            "Le 5 novembre 2019, à 7h28, Marc Garnier, étudiant de 24 ans, se réveille dans son petit appartement situé au 3 rue des Lilas à Lille. Il porte son pull vert foncé et une écharpe rouge. Sa sœur Camille Garnier, 19 ans, est hospitalisée depuis le 28 octobre à l'hôpital Saint-Vincent-de-Paul, situé à proximité : à seulement 2,5 km de chez lui.",
-            "Que penses-tu de cette histoire?"
+        lucasStory.Add(new StoryPart(1, "Le Réveil à Oberkampf",
+            "Le 8 avril, à 7h10, Thomas Rivière, 29 ans, journaliste indépendant, se réveille dans son appartement au 42 rue Oberkampf à Paris. Il enfile un pantalon et un pull gris clair. Sur son bureau, un enregistreur vocal clignote encore depuis la veille.",
+            "Es-tu intrigué par cet enregistreur laissé allumé ?"
         ));
 
-        lucasStory.Add(new StoryPart(2, "Le Trajet et l'Hôpital",
-            "Ce matin-là, Marc quitte son appartement à 8h05. Il prend le métro ligne 1 à la station Wazemmes à 8h12, direction CHU Eurasanté, et arrive à 8h26. Une fois à l'hôpital, il se rend au bâtiment B, chambre 214. Une infirmière nommée Nadia Lefèvre, d'environ 40 ans, lui indique que l'état de Camille est enfin stable. Marc entre dans la chambre de sa sœur à 8h40. Ils discutent et se souviennent de leurs vacances en 2008 à Arcachon. Ils étaient dans leur maison familiale, une maison blanche aux volets bleus, avec leur chiot Milo.",
-            "As-tu peur pour la sœur de Marc?"
+        lucasStory.Add(new StoryPart(2, "Le Trajet vers Bastille",
+            "À 8h00, Thomas quitte son appartement. Il prend la ligne 5 du métro à République en direction de Bastille, où il arrive à 8h12. Il a rendez-vous avec une source anonyme dans un café nommé \"Le Central\".",
+            "Ressens-tu une certaine tension avant cette rencontre ?"
         ));
 
-        lucasStory.Add(new StoryPart(3, "Résultats et Messages",
-            "À 11h20, le médecin entre. Antoine Girard, 50 ans, cheveux grisonnants, leur présente des résultats médicaux. L'évolution de la maladie de Camille est lente. 25 minutes plus tard, Marc dit au revoir à sa sœur et se dirige vers son café préféré \"Le Passage\", situé à 600 mètres de là. Il commande un chocolat chaud à 15,25 euros. À midi, Marc reçoit un message : il est accepté pour un casting qui lui tenait énormément à cœur : Barbie 2. Dans la foulée, il reçoit un second message de sa mère Isabelle, elle lui annonce qu'elle arrivera avec un retard de 25 minutes sur son TGV qui vient de Strasbourg, soit à 15h43 au lieu de 15h18. Marc retourne donc à l'hôpital à 12h30. À 15h10, il retrouve sa mère à son arrivée. Ensemble, ils lisent un passage du livre \"Le Petit Prince\", l'histoire préférée de Camille lorsqu'ils étaient enfants, à la page 47.",
-            "Es-tu optimiste ou pessimiste pour la suite de l'histoire?"
+        lucasStory.Add(new StoryPart(3, "La Rencontre au Café",
+            "À 8h20, un homme d'une cinquantaine d'années, manteau beige et regard fuyant, s'assoit face à lui. Sans se présenter, il lui tend une enveloppe kraft épaisse. À l'intérieur, des photos et un plan d'immeuble situé au 17 rue des Érables.",
+            "Cette rencontre te semble-t-elle inquiétante ?"
         ));
 
-        lucasStory.Add(new StoryPart(4, "L'Attente",
-            "Au goûter, Camille reçoit un plateau contenant une compote, un yaourt et un verre d'eau. Elle soupire... À 17h05, il quitte la chambre pendant quelques minutes pour aller lui chercher un moelleux au chocolat à la cafétéria.",
-            "Crois-tu que Camille va mourir?"
+        lucasStory.Add(new StoryPart(4, "Première Visite au 17 rue des Érables",
+            "À 9h15, Thomas se rend à l'adresse indiquée. L'immeuble est ancien, avec une façade fissurée et des volets fermés. Une affichette mentionne qu'il est inhabité depuis 10 ans.",
+            "Penses-tu que cet endroit cache quelque chose de suspect ?"
         ));
 
-        lucasStory.Add(new StoryPart(5, "Le Retour",
-            "À 17h30, Marc retrouve sa mère dans le hall, celle-ci est très silencieuse et semble pensive. En entrant dans le bus L5, sa mère a les yeux humides. Sa mère lui tend une enveloppe bleue. Marc comprend qu'elle vient de Camille. Chez lui, il s'assoit sur son canapé et déchire minutieusement l'enveloppe. La voix de Camille résonne dans sa tête : \"Marc, j'écris cette lettre car je n'ai pas le courage de te le dire en face\". Il découvre un cahier bleu clair contenant une liste écrite par Camille le 20 octobre, mentionnant un voyage à Barcelone. À 19h10, il envoie un message à 6 amis. À 21h45, il regarde 12 photos de famille. Il se couche à 23h30.",
-            "Qu'as-tu pensé de cette histoire?"
+        lucasStory.Add(new StoryPart(5, "L'Entrée par la Porte Entrouverte",
+            "En contournant le bâtiment, Thomas découvre une porte entrouverte à l'arrière. Il hésite quelques secondes avant d'entrer. À l'intérieur, l'air est froid et une odeur de poussière flotte.",
+            "Trouves-tu son choix d'entrer risqué ?"
         ));
+
+        lucasStory.Add(new StoryPart(6, "Le Symbole Mystérieux au Rez-de-Chaussée",
+            "À 10h05, il explore le rez-de-chaussée. Sur un mur, il remarque des inscriptions effacées et un symbole étrange dessiné à la craie. Il enregistre ses observations avec son dictaphone.",
+            "Ce symbole te semble-t-il important pour la suite ?"
+        ));
+
+        lucasStory.Add(new StoryPart(7, "L'Ordinateur au Premier Étage",
+            "À 10h40, Thomas monte au premier étage. Une pièce attire son attention : une table, une chaise, et un ordinateur portable encore branché. L'écran affiche un fichier nommé \"Dossier_21\".",
+            "Es-tu curieux de savoir ce que contient ce fichier ?"
+        ));
+
+        lucasStory.Add(new StoryPart(8, "La Révélation et la Fin",
+            "À 11h00, il ouvre le fichier. Des documents détaillent une série d'événements inexpliqués liés à l'immeuble, remontant à 2003. Parmi les noms mentionnés, Thomas reconnaît celui de son ancien rédacteur en chef.",
+            "Merci de m'avoir écouté."
+        ));
+    }
+
+    /// <summary>
+    /// Détermine si la partie courante doit avoir une interaction utilisateur (question)
+    /// </summary>
+    private bool IsCurrentPartInteractive()
+    {
+        if (storyInteractionMode == 0)
+        {
+            // Mode 0: Parties 0-3 non-interactives, Parties 4-7 interactives
+            return currentStoryPart >= 4;
+        }
+        else
+        {
+            // Mode 1: Parties 0-3 interactives, Parties 4-7 non-interactives
+            return currentStoryPart < 4;
+        }
+    }
+
+    /// <summary>
+    /// Coroutine pour avancer automatiquement à la partie suivante après que l'audio finisse
+    /// Utilisée pour les parties non-interactives
+    /// </summary>
+    private IEnumerator AutoAdvanceStoryPartAfterAudio()
+    {
+        Debug.Log($"📕 AUTO-ADVANCE COROUTINE STARTED for part {currentStoryPart}");
+        // Attendre que l'audio commence à jouer
+        yield return new WaitForSeconds(0.2f);
+        
+        Debug.Log($"⏳ Waiting for audio to finish (isPlaying={audioSource.isPlaying})...");
+        
+        // Attendre que l'audio finisse de jouer
+        float timeout = 0f;
+        while (audioSource.isPlaying && timeout < 300f) // Max 5 minutes de timeout
+        {
+            yield return new WaitForSeconds(0.1f);
+            timeout += 0.1f;
+        }
+        
+        Debug.Log($"🎵 Audio finished (or timeout) - Auto-advancing from part {currentStoryPart}");
+        
+        // Avancer à la partie suivante sans attendre d'interaction utilisateur
+        // On crée une progression fictive
+        lastUserResponse = "";  // Pas de réponse utilisateur
+        NextStoryPart();
     }
 
     /// <summary>
@@ -910,10 +1186,160 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         if (lucasStory.Count == 0)
             return;
 
-        Debug.Log("📖 DÉMARRAGE DE L'HISTOIRE: Histoire Lucas");
+        Debug.Log("📖 DÉMARRAGE DE L'HISTOIRE: Histoire Lucas (Mode " + storyInteractionMode + ")");
         isStoryMode = true;
         currentStoryPart = 0;
         TellCurrentStoryPart();
+    }
+
+    /// <summary>
+    /// Génère les directives émotionnelles détaillées selon l'émotion détectée
+    /// </summary>
+    private string GetEmotionalToneGuidance(Emotion emotion, int storyPartIndex)
+    {
+        if (storyPartIndex == 0 || emotion == Emotion.Surprise)
+            return ""; // Pas de contexte émotionnel spécifique par défaut
+
+        string toneGuidance = emotion switch
+        {
+            Emotion.Sadness => 
+                "\nTON DE VOIX: Parle avec une voix douce, mélancolique, pensive. Ralentis le rythme. Laisse des pauses significatives.",
+
+            Emotion.Joy =>
+                "\nTON DE VOIX: Parle avec chaleur et optimisme. La voix est plus légère et porte de l'espoir.",
+
+            Emotion.Fear =>
+                "\nTON DE VOIX: Parle avec une légère appréhension. La voix est prudente et attentive.",
+
+            Emotion.Anger =>
+                "\nTON DE VOIX: Parle avec une intensité contenue et fermeté. La voix est directe.",
+
+            Emotion.Surprise =>
+                "\nTON DE VOIX: Parle avec étonnement. La voix monte légèrement sur les moments clés.",
+
+            Emotion.Disgust =>
+                "\nTON DE VOIX: Parle avec une légère répulsion discrète. La voix montre un dégoût subtil.",
+
+            _ => ""
+        };
+
+        if (string.IsNullOrEmpty(toneGuidance))
+            return "";
+
+        return toneGuidance;
+    }
+
+    private string GetDetailedEmotionContext(Emotion emotion, int storyPartIndex)
+    {
+        if (storyPartIndex == 0 || emotion == Emotion.Surprise)
+            return ""; // Pas de contexte émotionnel pour la première partie
+
+        string emotionGuidance = emotion switch
+        {
+            Emotion.Sadness => 
+                "⚠️ CONTEXTE: L'utilisateur a manifesté de la TRISTESSE/MÉLANCOLIE.\n" +
+                "📝 DIRECTIVE: Renforce les éléments émotionnels profonds et mélancoliques. " +
+                "Utilise une tonalité poétique et réfléchie. Laisse de l'espace pour la réflexion émotionnelle. " +
+                "Intègre les tags {SAD} et {SURPRISE} naturellement.",
+
+            Emotion.Joy =>
+                "⚠️ CONTEXTE: L'utilisateur a manifesté de la JOIE/ENTHOUSIASME.\n" +
+                "📝 DIRECTIVE: Maintiens une énergie positive et engageante. " +
+                "Alterne entre {JOY} pour les moments d'espoir et {SURPRISE} pour les découvertes. " +
+                "Montre comment l'histoire progresse positivement.",
+
+            Emotion.Fear =>
+                "⚠️ CONTEXTE: L'utilisateur a manifesté de la PEUR/APPRÉHENSION.\n" +
+                "📝 DIRECTIVE: Construis progressivement la tension tout en assurant l'engagement. " +
+                "Utilise {FEAR} pour montrer le suspense, puis {SURPRISE} quand les révélations arrivent. " +
+                "Balance entre tension et progression de l'histoire.",
+
+            Emotion.Anger =>
+                "⚠️ CONTEXTE: L'utilisateur a manifesté de la COLÈRE/FRUSTRATION.\n" +
+                "📝 DIRECTIVE: Reconnaissez le conflit émotionnel de l'utilisateur. " +
+                "Utilise {ANGER} brièvement, puis {SURPRISE} pour transformer l'émotion en curiosité. " +
+                "Chaque révélation doit au progressivement amener à la compréhension.",
+
+            Emotion.Surprise =>
+                "⚠️ CONTEXTE: L'utilisateur a manifesté de la SURPRISE/ÉTONNEMENT.\n" +
+                "📝 DIRECTIVE: Maintiens le ton revelateur et suspenseful. " +
+                "Utilise {SURPRISE} pour les moments clés et {FEAR} ou {SADNESS} pour ancrer les émotions. " +
+                "Chaque détail doit inviter à plus de découvertes.",
+
+            Emotion.Disgust =>
+                "⚠️ CONTEXTE: L'utilisateur a manifesté du DÉGOÛT/RÉPULSION.\n" +
+                "📝 DIRECTIVE: Respectez cette émotion sans la renforcer négativement. " +
+                "Utilisez {DISGUST} brièvement, puis transformez via {SURPRISE} ou {SADNESS}. " +
+                "Apportez de la nuance et de la compréhension pour progresser dans l'histoire.",
+
+            _ => ""
+        };
+
+        if (string.IsNullOrEmpty(emotionGuidance))
+            return "";
+
+        return $"\n\n{emotionGuidance}";
+    }
+
+    /// <summary>
+    /// Affiche l'émotion détectée sur le visage de l'agent avec les unités d'action faciales appropriées
+    /// Utilise UNIQUEMENT les 6 émotions primaires: JOY, SAD, ANGER, SURPRISE, FEAR, DISGUST
+    /// </summary>
+    private void DisplayEmotionOnFace(Emotion emotion)
+    {
+        if (faceExpression == null)
+        {
+            Debug.LogWarning("⚠️ FaceExpression not assigned!");
+            return;
+        }
+
+        Debug.Log($"🎭 EXPRESSION FACIALE: Affichage de l'émotion {emotion}");
+
+        // Mapper chaque émotion à des unités d'action faciales (Action Units)
+        // Les AU codes suivent le système Facial Action Coding System (FACS)
+        switch (emotion)
+        {
+            case Emotion.Sadness:
+                // AU: Baissement des sourcils (4), Baissement des coins de la bouche (15,17)
+                DisplayAUs(new int[] { 4, 15, 17 }, new int[] { 60, 50, 50 }, 1.5f);
+                Debug.Log("😢 Affichage: TRISTESSE/MÉLANCOLIE");
+                break;
+
+            case Emotion.Joy:
+                // AU: Sourire de Duchenne (6, 12) = levée des pommettes + coin des lèvres
+                DisplayAUs(new int[] { 6, 12 }, new int[] { 70, 80 }, 1.5f);
+                Debug.Log("😊 Affichage: JOIE/ENTHOUSIASME");
+                break;
+
+            case Emotion.Fear:
+                // AU: Levée des sourcils (1,2), Ouverture des yeux (5,26), Tension des lèvres (23)
+                DisplayAUs(new int[] { 1, 2, 5, 26, 23 }, new int[] { 50, 50, 70, 70, 60 }, 1.5f);
+                Debug.Log("😨 Affichage: PEUR/APPRÉHENSION");
+                break;
+
+            case Emotion.Anger:
+                // AU: Sourcils abaissés et rapprochés (4), Fermeture des lèvres (23,24)
+                DisplayAUs(new int[] { 4, 23, 24 }, new int[] { 70, 60, 50 }, 1.5f);
+                Debug.Log("😠 Affichage: COLÈRE");
+                break;
+
+            case Emotion.Surprise:
+                // AU: Levée des sourcils (1,2), Ouverture de la bouche (26)
+                DisplayAUs(new int[] { 1, 2, 26, 5 }, new int[] { 80, 80, 70, 60 }, 1.2f);
+                Debug.Log("😲 Affichage: SURPRISE/ÉTONNEMENT");
+                break;
+
+            case Emotion.Disgust:
+                // AU: Levée de la lèvre supérieure (9,10), Plissement du nez (9)
+                DisplayAUs(new int[] { 9, 10 }, new int[] { 50, 60 }, 1.2f);
+                Debug.Log("🤢 Affichage: DÉGOÛT");
+                break;
+
+            default:
+                // Expression par défaut pour les émotions non spécifiées
+                Debug.Log("😐 Affichage: PAR DÉFAUT");
+                break;
+        }
     }
 
     /// <summary>
@@ -921,22 +1347,67 @@ public class AvaturnLLMDialogManager : MonoBehaviour
     /// </summary>
     private void TellCurrentStoryPart()
     {
+        // Sécurité absolue: ne rien faire si l'histoire n'est pas en cours
+        if (!isStoryMode)
+        {
+            Debug.Log("🔇 TellCurrentStoryPart() appelée mais isStoryMode=false - ARRÊT COMPLET");
+            return;
+        }
+
         if (currentStoryPart >= lucasStory.Count)
         {
-            Debug.Log("🏁 Histoire terminée!");
+            Debug.Log("🏁 TellCurrentStoryPart(): HISTOIRE TERMINÉE! (currentStoryPart >= Count)");
             isStoryMode = false;
             return;
         }
 
         StoryPart part = lucasStory[currentStoryPart];
+        bool isInteractive = IsCurrentPartInteractive();
         
-        Debug.Log($"📕 RACONTE PARTIE {part.id}/9: {part.title}");
+        Debug.Log($"📕 RACONTE PARTIE {part.id}/8: {part.title} (Mode: {(isInteractive ? "INTERACTIF" : "AUTOMATIQUE")})");
         
-        // Construire le message pour l'IA avec la partie et la question
-        // FORMAT TRÈS EXPLICITE pour forcer le LLM à poser la question
-        string storyMessage = $"RACONTE CETTE PARTIE DE L'HISTOIRE:\n\n[Partie {part.id}/9: {part.title}]\n\n{part.narrative}\n\n---\n\nAPRÈS AVOIR RACONTÉ CETTE PARTIE, TU DOIS ABSOLUMENT POSER EXACTEMENT CETTE QUESTION À LA FIN:\n\n\"{part.userQuestion}\"\n\nN'OUBLIE PAS: TU DOIS POSER LA QUESTION À LA FIN. C'EST OBLIGATOIRE.";
+        // Pour les parties après la première, inclure UNIQUEMENT des directives de TON/VOIX, pas de contenu
+        string emotionContext = isInteractive ? GetEmotionalToneGuidance(detectedUserEmotion, currentStoryPart) : "";
         
-        // Ajouter à la conversation
+        // Construire le message pour l'IA avec la partie et la question (ou pas)
+        string storyMessage;
+        
+        if (isInteractive)
+        {
+            // Mode INTERACTIF: poser la question et attendre la réponse de l'utilisateur
+            storyMessage = $"IMPORTANT: Tu dois faire EXACTEMENT ceci:\n\n" +
+                $"1. Lis le texte suivant CARACTÈRE PAR CARACTÈRE (aucune modification, aucun ajout, aucune suppression):\n\n" +
+                $"\"{part.narrative}\"\n\n" +
+                $"2. Puis pose EXACTEMENT cette question (parole par parole):\n\n" +
+                $"\"{part.userQuestion}\"\n\n" +
+                $"RÈGLES ABSOLUES:\n" +
+                $"- ZÉRO modification du texte\n" +
+                $"- ZÉRO ajout de mots\n" +
+                $"- ZÉRO suppression de mots\n" +
+                $"- ZÉRO réinterprétation\n" +
+                $"- ZÉRO paraphrase\n" +
+                $"Copie le texte exactement, puis pose la question exactement.{emotionContext}";
+        }
+        else
+        {
+            // Mode AUTOMATIQUE: ne pas poser de question, continuer la narration
+            storyMessage = $"IMPORTANT: Tu dois faire EXACTEMENT ceci:\n\n" +
+                $"Lis le texte suivant CARACTÈRE PAR CARACTÈRE (aucune modification, aucun ajout, aucune suppression):\n\n" +
+                $"\"{part.narrative}\"\n\n" +
+                $"RÈGLES ABSOLUES:\n" +
+                $"- ZÉRO modification du texte\n" +
+                $"- ZÉRO ajout de mots\n" +
+                $"- ZÉRO suppression de mots\n" +
+                $"- ZÉRO réinterprétation\n" +
+                $"- ZÉRO paraphrase\n" +
+                $"- NE POSE PAS DE QUESTION APRÈS\n" +
+                $"Lis simplement le texte exactement comme écrit.";
+        }
+        
+        // Créer une conversation FRAÎCHE pour cette partie (pas d'historique qui interfère)
+        JsonValue storyConversation = new JsonValue(JsonType.Array);
+        
+        // Ajouter le message de la partie
         JsonValue userTurn = new JsonValue(JsonType.Object);
         JsonValue userRole = new JsonValue(JsonType.String);
         userRole.StringValue = "user";
@@ -944,28 +1415,86 @@ public class AvaturnLLMDialogManager : MonoBehaviour
         userContent.StringValue = storyMessage;
         userTurn.ObjectValues.Add("role", userRole);
         userTurn.ObjectValues.Add("content", userContent);
-        conversationList.ArrayValues.Add(userTurn);
-        if (conversationList.ArrayValues.Count > numberOfTurn)
-            conversationList.ArrayValues.RemoveAt(0);
+        storyConversation.ArrayValues.Add(userTurn);
 
-        // Envoyer au chat
-        SendToChat(conversationList);
+        // Envoyer au chat avec conversation fraîche
+        SendChatForStory(storyConversation);
     }
 
     /// <summary>
     /// Passe à la partie suivante de l'histoire après réponse utilisateur
+    /// Analyse l'émotion avec contexte avant de continuer
     /// </summary>
     public void NextStoryPart()
     {
         if (!isStoryMode)
+        {
+            Debug.Log("⚠️ NextStoryPart() appelé mais isStoryMode=false");
             return;
+        }
 
+        // Vérifier si la partie actuelle était interactive
+        bool wasInteractive = IsCurrentPartInteractive();
+        
+        Debug.Log($"📌 NextStoryPart() - Partie actuelle: {currentStoryPart}, Mode: {(wasInteractive ? "INTERACTIF" : "AUTOMATIQUE")}, Réponse: '{lastUserResponse}'");
+
+        // N'analyser l'émotion que si la partie était INTERACTIVE
+        if (wasInteractive && !string.IsNullOrWhiteSpace(lastUserResponse) && currentStoryPart < lucasStory.Count)
+        {
+            Debug.Log($"✅ Analysing emotion for response: '{lastUserResponse}'");
+            
+            var emotionData = emotionMapper.MapUserResponseToEmotion(
+                lastUserResponse,
+                currentStoryPart,
+                out Emotion detectedEmotion
+            );
+            
+            detectedUserEmotion = detectedEmotion;
+            
+            Debug.Log($"😊 ANALYSE ÉMOTIONNELLE PARTIE {currentStoryPart}: " +
+                $"Émotion={emotionData.detectedEmotion}, " +
+                $"Confiance={emotionData.confidence:F2}, " +
+                $"Tag={emotionData.emotionTag}");
+            Debug.Log($"   → Raison: {emotionData.reasoning}");
+            
+            // ✅ AFFICHER L'ÉMOTION SUR LE VISAGE DE L'AGENT
+            Debug.Log($"🎭 Appel à DisplayEmotionOnFace avec émotion: {detectedUserEmotion}");
+            DisplayEmotionOnFace(detectedUserEmotion);
+        }
+        else if (!wasInteractive)
+        {
+            Debug.Log($"ℹ️ Partie non-interactive - pas d'analyse émotionnelle");
+        }
+        else
+        {
+            Debug.Log($"⚠️ Pas d'analyse émotionnelle: lastUserResponse empty={string.IsNullOrWhiteSpace(lastUserResponse)}, currentStoryPart={currentStoryPart}, count={lucasStory.Count}");
+        }
+
+        // Avancer à la partie suivante
         currentStoryPart++;
         
         if (currentStoryPart >= lucasStory.Count)
         {
-            Debug.Log("Histoire Lucas complètement racontée!");
+            Debug.Log($"🏁 HISTOIRE TERMINÉE! (Mode {storyInteractionMode}, dernière partie = {currentStoryPart - 1})");
             isStoryMode = false;
+            
+            // Désactiver le microphone/dictation pour éviter que l'agent continue à parler
+            if (useWhisper)
+            {
+                if (microphoneRecord.IsRecording)
+                {
+                    microphoneRecord.StopRecord();
+                }
+            }
+            else
+            {
+                if (dictationRecognizer.Status == SpeechSystemStatus.Running)
+                {
+                    dictationRecognizer.Stop();
+                }
+            }
+            
+            Debug.Log("🔇 Microphone/Dictation désactivé après fin de l'histoire");
             return;
         }
 
